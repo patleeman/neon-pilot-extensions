@@ -75,24 +75,79 @@ Normal users should install from GitHub release artifacts:
 
 1. Create or update `neon.extensions.json`.
 2. Build each extension with Neon Pilot's extension builder.
-3. Pack each extension as `.neon-extension.zip`.
-4. Publish a GitHub release with those zip files.
-5. Optionally include a `neon-extension-catalog.json` release asset with artifact URLs, checksums, versions, permissions, and compatibility.
+3. Pack each extension as `<extension-id>.neon-extension.zip`.
+4. Publish a GitHub release whose tag matches the Neon Pilot app version that should install those artifacts.
+5. Include `neon-extension-catalog.json` with checksums and source metadata.
 
 GitHub is the transport and identity layer. Neon Pilot installs immutable release artifacts; source branch installs are for development only.
+
+The Neon Pilot installer currently resolves catalog items to release assets named:
+
+```text
+https://github.com/{owner}/{repo}/releases/download/{tag}/{extension-id}.neon-extension.zip
+```
+
+If a package entry does not declare its own `version` or `tag`, Neon Pilot uses the installed app version tag, such as `v0.9.1-rc.6`.
 
 ## Development install
 
 For local development, clone this repo beside `neon-pilot` and use the app repo's builder:
 
 ```bash
-cd ../neon-pilot
-pnpm run extension:build -- ../neon-pilot-extensions/system-browser
-neon-pilot-extension doctor ../neon-pilot-extensions/system-browser
-neon-pilot-extension pack ../neon-pilot-extensions/system-browser --out /tmp/system-browser.neon-extension.zip
+cd ../neon-pilot-extensions
+pnpm run build -- --extension system-browser
+pnpm run pack -- --extension system-browser --out-dir /tmp/neon-extension-artifacts
 ```
 
 Then import the zip from Settings -> Extensions, or install a local dev copy into a state root while iterating.
+
+If your Neon Pilot checkout is not beside this repo, set `NEON_PILOT_REPO`:
+
+```bash
+NEON_PILOT_REPO=/path/to/neon-pilot pnpm run build -- --extension system-browser
+```
+
+## Release workflow
+
+Prepare all release assets for a Neon Pilot app tag:
+
+```bash
+pnpm run release:prepare -- --tag v0.9.1-rc.6
+```
+
+Prepare one package:
+
+```bash
+pnpm run release:prepare -- --tag v0.9.1-rc.6 --extension system-browser
+```
+
+This writes:
+
+```text
+release-artifacts/v0.9.1-rc.6/
+  system-browser.neon-extension.zip
+  ...
+  neon-extension-catalog.json
+```
+
+Publish the release assets:
+
+```bash
+gh release create v0.9.1-rc.6 \
+  release-artifacts/v0.9.1-rc.6/*.neon-extension.zip \
+  release-artifacts/v0.9.1-rc.6/neon-extension-catalog.json \
+  --repo patleeman/neon-pilot-extensions
+```
+
+For an existing release, upload replacement assets explicitly:
+
+```bash
+gh release upload v0.9.1-rc.6 \
+  release-artifacts/v0.9.1-rc.6/*.neon-extension.zip \
+  release-artifacts/v0.9.1-rc.6/neon-extension-catalog.json \
+  --repo patleeman/neon-pilot-extensions \
+  --clobber
+```
 
 ## First-party packages
 

@@ -1,5 +1,7 @@
 node_modules/
 dist/
+release-artifacts/
+*.neon-extension.zip
 .dist.tmp-*/
 *.log
 sidecar/target/

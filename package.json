@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "list": "node scripts/list-packages.mjs"
+    "list": "node scripts/list-packages.mjs",
+    "build": "node scripts/build-extension.mjs",
+    "pack": "node scripts/pack-extension.mjs",
+    "release:prepare": "node scripts/prepare-release.mjs"
   }
 }

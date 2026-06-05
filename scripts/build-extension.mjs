@@ -1,31 +1,19 @@
 #!/usr/bin/env node
-/* eslint-env node */
-import { existsSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { resolve } from 'node:path';
 
-const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const installableRoot = resolve(repoRoot, 'installable-extensions');
-const extensionId = readFlag('--extension') ?? process.argv[2];
+import { fail, listPackages, readSelectedPackageIds, resolveNeonPilotRepo } from './repo-tools.mjs';
 
-if (!extensionId) fail('Usage: pnpm run build -- --extension <extension-id>');
+const args = process.argv.slice(2);
+const neonPilotRepo = resolveNeonPilotRepo();
+const packages = listPackages(readSelectedPackageIds(args));
+if (packages.length === 0) fail('No matching extension packages found.');
 
-const extensionRoot = resolve(installableRoot, extensionId);
-if (!existsSync(resolve(extensionRoot, 'extension.json'))) fail(`No extension found at ${extensionRoot}`);
-
-const result = spawnSync(process.execPath, [resolve(repoRoot, 'scripts/extension-build.mjs'), extensionRoot], {
-  cwd: repoRoot,
-  stdio: 'inherit',
-});
-process.exit(result.status ?? 1);
-
-function readFlag(name) {
-  const index = process.argv.indexOf(name);
-  return index === -1 ? null : process.argv[index + 1];
-}
-
-function fail(message) {
-  console.error(message);
-  process.exit(1);
+for (const entry of packages) {
+  console.log(`Building ${entry.id}`);
+  const result = spawnSync(process.execPath, [resolve(neonPilotRepo, 'scripts', 'extension-build.mjs'), entry.packageRoot], {
+    cwd: neonPilotRepo,
+    stdio: 'inherit',
+  });
+  if ((result.status ?? 1) !== 0) process.exit(result.status ?? 1);
 }
