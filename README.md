@@ -102,6 +102,7 @@ Then import the zip from Settings -> Extensions, or install a local dev copy int
 - `system-ds4` - local DeepSeek V4 Flash provider/profile for antirez/ds4.
 - `system-duckduckgo-search` - agent web search tool backed by DuckDuckGo HTML results.
 - `system-exa-search` - agent tool for Exa web search.
+- `system-hermes-agent` - connect Neon Pilot to one or more Hermes Agent API deployments.
 - `system-local-models` - local MLX and GGUF model management UI.
 - `system-onboarding` - first-run onboarding bootstrap and conversation flow.
 - `system-self-preservation` - agent self-preservation instruction and context hooks.

@@ -17,6 +17,7 @@
     { "id": "system-ds4", "path": "system-ds4", "channel": "stable" },
     { "id": "system-duckduckgo-search", "path": "system-duckduckgo-search", "channel": "stable" },
     { "id": "system-exa-search", "path": "system-exa-search", "channel": "stable" },
+    { "id": "system-hermes-agent", "path": "system-hermes-agent", "channel": "stable" },
     { "id": "system-local-models", "path": "system-local-models", "channel": "stable" },
     { "id": "system-onboarding", "path": "system-onboarding", "channel": "stable" },
     { "id": "system-self-preservation", "path": "system-self-preservation", "channel": "stable" },
