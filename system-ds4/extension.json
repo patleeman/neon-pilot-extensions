@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "system-ds4",
   "name": "DS4",
-  "packageType": "system",
+  "packageType": "user",
   "defaultEnabled": false,
   "description": "DeepSeek V4 Flash local model profile and ds4-agent-shaped tools for antirez/ds4.",
   "version": "0.1.3",

@@ -48,6 +48,7 @@ example-search/
 Rules:
 
 - Include `extension.json`.
+- Set `"packageType": "user"` for repo-distributed packages so Neon Pilot can uninstall and update them after install.
 - Include prebuilt `dist/` entries for every frontend or backend entry.
 - Do not include `node_modules`, local build caches, `.dist.tmp-*`, or sidecar build output such as `sidecar/target`.
 - Do not rely on npm install, postinstall scripts, or runtime compilation.
@@ -159,7 +160,6 @@ gh release upload v0.9.1-rc.6 \
 - `system-exa-search` - agent tool for Exa web search.
 - `system-hermes-agent` - connect Neon Pilot to one or more Hermes Agent API deployments.
 - `system-local-models` - local MLX and GGUF model management UI.
-- `system-onboarding` - first-run onboarding bootstrap and conversation flow.
 - `system-self-preservation` - agent self-preservation instruction and context hooks.
 - `system-suggested-context` - related conversation suggestions for new prompts.
 - `system-video-probe` - analyze UI recordings and videos with a video-capable model.

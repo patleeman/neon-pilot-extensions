@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "system-duckduckgo-search",
   "name": "DuckDuckGo Search",
-  "packageType": "system",
+  "packageType": "user",
   "description": "Agent web search tool backed by DuckDuckGo HTML results.",
   "version": "0.1.0",
   "backend": {

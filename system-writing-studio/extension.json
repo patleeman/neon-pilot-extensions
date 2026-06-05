@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "system-writing-studio",
   "name": "Writing Studio",
-  "packageType": "system",
+  "packageType": "user",
   "description": "Document-first collaborative markdown editor with CRDT replay, agent annotations, reactions, suggestions, and chat.",
   "version": "0.1.2",
   "defaultEnabled": false,

@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "system-video-probe",
   "name": "Video Probe",
-  "packageType": "system",
+  "packageType": "user",
   "defaultEnabled": false,
   "description": "Analyze video files using a video-capable model. Manages a local mlx-vlm runtime (Apple Silicon) or routes to OpenRouter.",
   "version": "0.1.0",

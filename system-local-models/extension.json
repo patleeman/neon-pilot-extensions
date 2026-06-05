@@ -4,7 +4,7 @@
   "name": "Local Models",
   "description": "Manage local MLX and GGUF model runtimes from one workspace.",
   "version": "0.1.0",
-  "packageType": "system",
+  "packageType": "user",
   "defaultEnabled": false,
   "frontend": {
     "entry": "dist/frontend.js"

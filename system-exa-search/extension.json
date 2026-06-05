@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "system-exa-search",
   "name": "Exa Search",
-  "packageType": "system",
+  "packageType": "user",
   "description": "Agent tool for Exa web search.",
   "version": "0.1.0",
   "backend": {

@@ -41,5 +41,6 @@
   "compatibility": {
     "neonPilot": ">=0.10.0 <0.11.0",
     "extensionApi": "^2"
-  }
+  },
+  "packageType": "user"
 }
