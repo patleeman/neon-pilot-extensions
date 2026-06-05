@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.dist.tmp-*/
+*.log
+sidecar/target/
+.DS_Store

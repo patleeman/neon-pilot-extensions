@@ -1,0 +1,110 @@
+# Neon Pilot Extensions
+
+This repository contains first-party optional Neon Pilot extensions. Neon Pilot itself keeps core small and ships bundled system extensions from the app repo; optional workflows live here and are distributed as prebuilt `.neon-extension.zip` release artifacts.
+
+## Repository contract
+
+A Neon Pilot extension repository has a root `neon.extensions.json` file. It can point to one extension or many:
+
+```json
+{
+  "schemaVersion": 1,
+  "publisher": {
+    "id": "example",
+    "name": "Example Publisher"
+  },
+  "repository": {
+    "type": "github",
+    "owner": "example",
+    "repo": "example-neon-extensions"
+  },
+  "packages": [
+    {
+      "id": "example-search",
+      "path": "extensions/example-search",
+      "channel": "stable"
+    }
+  ]
+}
+```
+
+Each package path must contain an `extension.json`. Runtime installs use built artifacts, not npm packages and not install-time compilation.
+
+## Package format
+
+The portable package format is a zip named `<extension-id>-<version>.neon-extension.zip` or `<extension-id>.neon-extension.zip`. The zip must contain exactly one top-level directory:
+
+```text
+example-search/
+  extension.json
+  README.md
+  LICENSE
+  dist/
+    frontend.js
+    backend.mjs
+  assets/
+```
+
+Rules:
+
+- Include `extension.json`.
+- Include prebuilt `dist/` entries for every frontend or backend entry.
+- Do not include `node_modules`, local build caches, `.dist.tmp-*`, or sidecar build output such as `sidecar/target`.
+- Do not rely on npm install, postinstall scripts, or runtime compilation.
+- Keep host imports external: `@neon-pilot/extensions`, `@neon-pilot/extensions/ui`, React, and approved backend subpaths are provided by Neon Pilot.
+- Declare Neon Pilot compatibility in the extension manifest.
+
+Example compatibility metadata:
+
+```json
+{
+  "schemaVersion": 2,
+  "id": "example-search",
+  "name": "Example Search",
+  "version": "0.1.0",
+  "compatibility": {
+    "neonPilot": ">=0.10.0 <0.11.0",
+    "extensionApi": "^2"
+  }
+}
+```
+
+## GitHub distribution
+
+Normal users should install from GitHub release artifacts:
+
+1. Create or update `neon.extensions.json`.
+2. Build each extension with Neon Pilot's extension builder.
+3. Pack each extension as `.neon-extension.zip`.
+4. Publish a GitHub release with those zip files.
+5. Optionally include a `neon-extension-catalog.json` release asset with artifact URLs, checksums, versions, permissions, and compatibility.
+
+GitHub is the transport and identity layer. Neon Pilot installs immutable release artifacts; source branch installs are for development only.
+
+## Development install
+
+For local development, clone this repo beside `neon-pilot` and use the app repo's builder:
+
+```bash
+cd ../neon-pilot
+pnpm run extension:build -- ../neon-pilot-extensions/system-browser
+neon-pilot-extension doctor ../neon-pilot-extensions/system-browser
+neon-pilot-extension pack ../neon-pilot-extensions/system-browser --out /tmp/system-browser.neon-extension.zip
+```
+
+Then import the zip from Settings -> Extensions, or install a local dev copy into a state root while iterating.
+
+## First-party packages
+
+- `system-agent-browser` - agent-browser CLI tool integration for autonomous browser/app automation.
+- `system-alleycat` - mobile pairing bridge for Kitty Litter clients.
+- `system-browser` - browser automation tool and Workbench browser views.
+- `system-ds4` - local DeepSeek V4 Flash provider/profile for antirez/ds4.
+- `system-duckduckgo-search` - agent web search tool backed by DuckDuckGo HTML results.
+- `system-exa-search` - agent tool for Exa web search.
+- `system-local-models` - local MLX and GGUF model management UI.
+- `system-onboarding` - first-run onboarding bootstrap and conversation flow.
+- `system-self-preservation` - agent self-preservation instruction and context hooks.
+- `system-suggested-context` - related conversation suggestions for new prompts.
+- `system-video-probe` - analyze UI recordings and videos with a video-capable model.
+- `system-writing-studio` - writing workflow surface.

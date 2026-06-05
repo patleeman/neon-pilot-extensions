@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "publisher": {
+    "id": "neon-pilot",
+    "name": "Neon Pilot",
+    "url": "https://github.com/patleeman/neon-pilot"
+  },
+  "repository": {
+    "type": "github",
+    "owner": "patleeman",
+    "repo": "neon-pilot-extensions"
+  },
+  "packages": [
+    { "id": "system-agent-browser", "path": "system-agent-browser", "channel": "stable" },
+    { "id": "system-alleycat", "path": "system-alleycat", "channel": "stable" },
+    { "id": "system-browser", "path": "system-browser", "channel": "stable" },
+    { "id": "system-ds4", "path": "system-ds4", "channel": "stable" },
+    { "id": "system-duckduckgo-search", "path": "system-duckduckgo-search", "channel": "stable" },
+    { "id": "system-exa-search", "path": "system-exa-search", "channel": "stable" },
+    { "id": "system-local-models", "path": "system-local-models", "channel": "stable" },
+    { "id": "system-onboarding", "path": "system-onboarding", "channel": "stable" },
+    { "id": "system-self-preservation", "path": "system-self-preservation", "channel": "stable" },
+    { "id": "system-suggested-context", "path": "system-suggested-context", "channel": "stable" },
+    { "id": "system-video-probe", "path": "system-video-probe", "channel": "stable" },
+    { "id": "system-writing-studio", "path": "system-writing-studio", "channel": "stable" }
+  ]
+}
