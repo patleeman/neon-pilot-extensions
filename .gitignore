@@ -5,4 +5,5 @@ release-artifacts/
 .dist.tmp-*/
 *.log
 sidecar/target/
+**/sidecar/target/
 .DS_Store
