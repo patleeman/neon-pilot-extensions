@@ -12,6 +12,7 @@ import {
   Notice,
   Select,
   SurfacePanel,
+  TextButton,
   TextInput,
   cx,
   type ActivityTreeItem,
@@ -975,13 +976,13 @@ export function HermesSessionsSidebar({ pa, context }: ExtensionSurfaceProps) {
                 onSelect={(session) => void navigateTo(pa, buildSessionRoute(deployment.id, sessionId(session)))}
               />
               {hiddenCount > 0 ? (
-                <button
+                <TextButton
                   type="button"
                   onClick={showHiddenSessions}
-                  className="mx-2 mt-2 rounded px-2 py-1 text-left text-[11px] text-dim hover:bg-surface-hover hover:text-secondary"
+                  className="mx-2 mt-2 px-2 py-1 text-left text-[11px]"
                 >
                   Show {hiddenCount} hidden {hiddenCount === 1 ? 'session' : 'sessions'}
-                </button>
+                </TextButton>
               ) : null}
             </div>
           );
