@@ -120,6 +120,16 @@ NEON_PILOT_REPO=/path/to/neon-pilot pnpm run build -- --extension system-browser
 
 ## Release workflow
 
+GitHub Actions can publish all packages automatically. Use **Actions -> Publish extension packages -> Run workflow**, enter the Neon Pilot app tag, and leave `neon_pilot_ref` blank to build against the same tag in `patleeman/neon-pilot`.
+
+Pushing a `v*` tag in this repository also runs the workflow. The workflow:
+
+1. Checks out this repository.
+2. Checks out `patleeman/neon-pilot` at the selected app tag/ref.
+3. Installs Neon Pilot dependencies.
+4. Builds and packs every package in `neon.extensions.json`.
+5. Uploads all `.neon-extension.zip` assets plus `neon-extension-catalog.json` to the GitHub release.
+
 Prepare all release assets for a Neon Pilot app tag:
 
 ```bash

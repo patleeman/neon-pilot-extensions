@@ -1,0 +1,114 @@
+name: Publish extension packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish, for example v0.10.2"
+        required: true
+        type: string
+      neon_pilot_ref:
+        description: "neon-pilot ref to build against. Defaults to the release tag."
+        required: false
+        type: string
+      clobber:
+        description: "Replace assets on an existing release"
+        required: false
+        default: true
+        type: boolean
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: macos-15
+    env:
+      EXTENSIONS_REPO: ${{ github.workspace }}/neon-pilot-extensions
+      NEON_PILOT_REPO: ${{ github.workspace }}/neon-pilot
+    steps:
+      - name: Resolve release inputs
+        id: release
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            tag="${{ inputs.tag }}"
+            neon_pilot_ref="${{ inputs.neon_pilot_ref }}"
+            clobber="${{ inputs.clobber }}"
+          else
+            tag="${GITHUB_REF_NAME}"
+            neon_pilot_ref=""
+            clobber="true"
+          fi
+
+          if [[ -z "${neon_pilot_ref}" ]]; then
+            neon_pilot_ref="${tag}"
+          fi
+
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "neon_pilot_ref=${neon_pilot_ref}" >> "$GITHUB_OUTPUT"
+          echo "clobber=${clobber}" >> "$GITHUB_OUTPUT"
+
+      - name: Check out extension repository
+        uses: actions/checkout@v4
+        with:
+          path: neon-pilot-extensions
+
+      - name: Check out Neon Pilot
+        uses: actions/checkout@v4
+        with:
+          repository: patleeman/neon-pilot
+          ref: ${{ steps.release.outputs.neon_pilot_ref }}
+          path: neon-pilot
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: neon-pilot/package.json
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: neon-pilot/pnpm-lock.yaml
+
+      - name: Install Neon Pilot dependencies
+        working-directory: neon-pilot
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare extension release artifacts
+        working-directory: neon-pilot-extensions
+        run: pnpm run release:prepare -- --tag "${{ steps.release.outputs.tag }}"
+
+      - name: Publish GitHub release assets
+        working-directory: neon-pilot-extensions
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          CLOBBER: ${{ steps.release.outputs.clobber }}
+        shell: bash
+        run: |
+          artifact_dir="release-artifacts/${RELEASE_TAG}"
+          shopt -s nullglob
+          assets=("${artifact_dir}"/*.neon-extension.zip "${artifact_dir}/neon-extension-catalog.json")
+          if [[ ${#assets[@]} -eq 0 ]]; then
+            echo "No release artifacts found in ${artifact_dir}" >&2
+            exit 1
+          fi
+
+          if gh release view "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            args=(release upload "${RELEASE_TAG}" "${assets[@]}" --repo "${GITHUB_REPOSITORY}")
+            if [[ "${CLOBBER}" == "true" ]]; then
+              args+=(--clobber)
+            fi
+            gh "${args[@]}"
+          else
+            gh release create "${RELEASE_TAG}" "${assets[@]}" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --title "${RELEASE_TAG}" \
+              --notes "Neon Pilot extension packages for ${RELEASE_TAG}."
+          fi
