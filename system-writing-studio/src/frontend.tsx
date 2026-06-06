@@ -14,6 +14,9 @@ import {
   ErrorState,
   ExtensionChatRail,
   LoadingState,
+  SearchInput,
+  Textarea,
+  TextInput,
   ToolbarButton,
   useFileTreeModel,
 } from '@neon-pilot/extensions/ui';
@@ -589,7 +592,7 @@ function WritingFormatBar({
             applyLink();
           }}
         >
-          <input
+          <TextInput
             value={linkHref}
             onChange={(event) => setLinkHref(event.target.value)}
             placeholder="https://..."
@@ -1195,7 +1198,7 @@ export function WritingStudioSidebar({ pa }: { pa: NativeExtensionClient }) {
       </div>
     ) : actionMode !== 'idle' ? (
       <div className="writing-studio-doc-form writing-studio-doc-inline-action">
-        <input
+        <TextInput
           value={actionValue}
           onChange={(event) => setActionValue(event.target.value)}
           onKeyDown={(event) => {
@@ -1270,7 +1273,7 @@ export function WritingStudioSidebar({ pa }: { pa: NativeExtensionClient }) {
           </label>
         </div>
       </div>
-      <input
+      <SearchInput
         className="writing-studio-sidebar-search"
         value={search}
         onChange={(event) => setSearch(event.target.value)}
@@ -2106,7 +2109,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
     <main className={`writing-studio ${railCollapsed ? 'has-collapsed-rail' : ''}`} style={layoutStyle}>
       <section className="writing-studio-main">
         <div className="writing-studio-filebar">
-          <input
+          <TextInput
             className="writing-studio-file-name"
             value={fileNameDraft}
             onChange={(event) => {
@@ -2351,7 +2354,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
             <div className="writing-studio-modal-body">
               <div className="writing-studio-field">
                 <label htmlFor="writing-studio-review-interval">Review cadence, seconds</label>
-                <input
+                <TextInput
                   id="writing-studio-review-interval"
                   type="number"
                   min={3}
@@ -2367,7 +2370,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
               </div>
               <div className="writing-studio-field">
                 <label htmlFor="writing-studio-review-prompt">Review prompt</label>
-                <textarea
+                <Textarea
                   id="writing-studio-review-prompt"
                   value={settingsDraft.reviewPrompt}
                   onChange={(event) => setSettingsDraft((draft) => ({ ...draft, reviewPrompt: event.target.value }))}
@@ -2375,7 +2378,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
               </div>
               <div className="writing-studio-field">
                 <label htmlFor="writing-studio-agent-instructions">Agent instructions</label>
-                <textarea
+                <Textarea
                   id="writing-studio-agent-instructions"
                   value={settingsDraft.agentInstructions}
                   onChange={(event) => setSettingsDraft((draft) => ({ ...draft, agentInstructions: event.target.value }))}
