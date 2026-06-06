@@ -1,5 +1,5 @@
 import type { NativeExtensionClient } from '@neon-pilot/extensions';
-import { Textarea } from '@neon-pilot/extensions/ui';
+import { Button, CodeBlock, Disclosure, Notice, Pill, ResourceList, ResourceListRow, Textarea } from '@neon-pilot/extensions/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface AlleycatPairPayload {
@@ -26,10 +26,7 @@ interface AlleycatSettingsPanelProps {
 
 const SECTION = 'mb-6';
 const LABEL = 'mb-1.5 text-[12px] font-medium text-secondary';
-const MONO = 'w-full rounded-lg border border-border-subtle bg-surface/70 px-3 py-2 font-mono text-[12px] leading-5 text-primary';
-const BUTTON = 'ui-toolbar-button rounded-lg px-3 py-1.5 text-[12px] font-medium shadow-none transition-colors active:scale-[0.97]';
 const NOTE = 'mt-1 text-[11px] leading-relaxed text-tertiary';
-const CALLOUT = 'rounded-lg bg-surface/60 px-3 py-2 text-[12px] leading-relaxed text-secondary';
 
 function shortNodeId(nodeId: string): string {
   return nodeId.length <= 18 ? nodeId : `${nodeId.slice(0, 8)}…${nodeId.slice(-8)}`;
@@ -99,8 +96,7 @@ function AlleycatPanel({ pa }: AlleycatSettingsPanelProps) {
     <div>
       <div className={SECTION}>
         <div className={LABEL}>Setup</div>
-        <div className={CALLOUT}>
-          <div className="font-medium text-primary">Use the Kitty Litter iOS app — not the Kitty Litter npm host.</div>
+        <Notice title="Use the Kitty Litter iOS app, not the Kitty Litter npm host.">
           <ol className="mt-2 list-decimal space-y-1 pl-4">
             <li>Enable this extension in Neon Pilot; the companion host starts automatically.</li>
             <li>Open Kitty Litter on your phone and scan this QR code.</li>
@@ -110,14 +106,14 @@ function AlleycatPanel({ pa }: AlleycatSettingsPanelProps) {
             Disable the extension to stop the host. Do not install or run <span className="font-mono">npx kittylitter</span>; that starts
             the upstream host and advertises its built-in agents.
           </p>
-        </div>
+        </Notice>
       </div>
 
       <div className={SECTION}>
         <div className={LABEL}>Host status</div>
         <div className="flex items-center gap-2 text-[13px] text-primary">
           <span className={`inline-block h-2 w-2 rounded-full ${status?.running ? 'bg-success' : 'bg-danger'}`} />
-          <span>{status?.running ? 'Running' : 'Stopped'}</span>
+          <Pill tone={status?.running ? 'success' : 'danger'}>{status?.running ? 'Running' : 'Stopped'}</Pill>
           {status?.port ? <span className="text-tertiary">local compat port {status.port}</span> : null}
           {status?.implementation ? <span className="text-tertiary">· {status.implementation}</span> : null}
         </div>
@@ -126,21 +122,17 @@ function AlleycatPanel({ pa }: AlleycatSettingsPanelProps) {
 
       <div className={SECTION}>
         <div className={LABEL}>Advertised agents</div>
-        <div className="space-y-2">
+        <ResourceList>
           {(status?.agents ?? []).map((agent) => (
-            <div key={agent.name} className="flex items-center justify-between gap-3 rounded-lg bg-surface/60 px-3 py-2">
-              <div>
-                <div className="text-[13px] font-medium text-primary">{agent.display_name}</div>
-                <div className="font-mono text-[11px] text-tertiary">
-                  {agent.name} · {agent.wire}
-                </div>
-              </div>
-              <div className={agent.available ? 'text-[12px] text-success' : 'text-[12px] text-tertiary'}>
-                {agent.available ? 'Available' : 'Unavailable'}
-              </div>
-            </div>
+            <ResourceListRow
+              key={agent.name}
+              title={agent.display_name}
+              detail={`${agent.name} · ${agent.wire}`}
+              meta={agent.available ? 'Available' : 'Unavailable'}
+              metaTone={agent.available ? 'success' : 'muted'}
+            />
           ))}
-        </div>
+        </ResourceList>
       </div>
 
       {status?.pairPayload && pairPayloadReady ? (
@@ -159,37 +151,37 @@ function AlleycatPanel({ pa }: AlleycatSettingsPanelProps) {
                 Node {shortNodeId(status.pairPayload.node_id)} · relay {status.pairPayload.relay ?? 'default'}
               </p>
             </div>
-            <details className="self-start">
-              <summary className="cursor-pointer text-[12px] font-medium text-secondary hover:text-primary">Pair payload</summary>
+            <Disclosure summary={<span className="text-[12px] font-medium text-primary">Pair payload</span>} className="self-start">
               <Textarea
                 readOnly
-                className={`${MONO} mt-2 min-h-[9rem] resize-none`}
+                className="mt-2 min-h-[9rem] resize-none font-mono text-[12px]"
                 value={pairPayloadJson}
                 onClick={(event) => event.currentTarget.select()}
               />
-            </details>
+            </Disclosure>
           </div>
         </div>
       ) : null}
 
       {status?.logs?.length ? (
-        <details className={SECTION}>
-          <summary className="cursor-pointer text-[12px] font-medium text-secondary hover:text-primary">Host logs</summary>
-          <pre className={`${MONO} mt-2 max-h-40 overflow-auto whitespace-pre-wrap`}>{status.logs.slice(-12).join('\n')}</pre>
-        </details>
+        <Disclosure className={SECTION} summary={<span className="text-[12px] font-medium text-primary">Host logs</span>}>
+          <CodeBlock compact className="max-h-40 overflow-auto">
+            {status.logs.slice(-12).join('\n')}
+          </CodeBlock>
+        </Disclosure>
       ) : null}
 
       <div className={SECTION}>
         <div className="flex flex-wrap gap-2">
-          <button className={BUTTON} disabled={busy || !status?.pairPayload} onClick={() => void copyPairPayload()}>
+          <Button disabled={busy || !status?.pairPayload} onClick={() => void copyPairPayload()}>
             {copied ? 'Copied' : 'Copy pair payload'}
-          </button>
-          <button className={BUTTON} disabled={busy} onClick={() => void invoke('rotateToken')}>
+          </Button>
+          <Button disabled={busy} onClick={() => void invoke('rotateToken')}>
             Rotate token
-          </button>
-          <button className={BUTTON} disabled={busy} onClick={refresh}>
+          </Button>
+          <Button disabled={busy} onClick={refresh}>
             Refresh
-          </button>
+          </Button>
         </div>
       </div>
     </div>
