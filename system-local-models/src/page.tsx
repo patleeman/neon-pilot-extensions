@@ -2,7 +2,13 @@ import type { ExtensionSurfaceProps, NativeExtensionClient } from '@neon-pilot/e
 import {
   AppPageIntro,
   AppPageLayout,
+  DataTable,
+  DataTableBody,
+  DataTableCell,
   DataTableEmptyRow,
+  DataTableHead,
+  DataTableHeaderCell,
+  DataTableRow,
   Field,
   Notice,
   Pill,
@@ -897,23 +903,22 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                     <div className="mt-5 text-sm text-secondary">No downloaded model selected.</div>
                   )}
 
-                  <div className="mt-4 overflow-x-auto rounded-lg border border-border-subtle/50 bg-background/15">
-                    <table className="w-full text-left text-sm">
-                      <thead className="bg-surface/50 text-xs uppercase tracking-[0.12em] text-dim">
-                        <tr>
-                          <th className="px-3 py-2 font-medium">Model</th>
-                          <th className="px-3 py-2 font-medium">Format</th>
-                          <th className="px-3 py-2 font-medium">Size</th>
-                          <th className="px-3 py-2 font-medium">State</th>
-                          <th className="px-3 py-2 font-medium">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                  <DataTable className="mt-4 rounded-lg border border-border-subtle/50 bg-background/15">
+                    <DataTableHead>
+                      <DataTableRow>
+                        <DataTableHeaderCell>Model</DataTableHeaderCell>
+                        <DataTableHeaderCell>Format</DataTableHeaderCell>
+                        <DataTableHeaderCell>Size</DataTableHeaderCell>
+                        <DataTableHeaderCell>State</DataTableHeaderCell>
+                        <DataTableHeaderCell>Actions</DataTableHeaderCell>
+                      </DataTableRow>
+                    </DataTableHead>
+                    <DataTableBody>
                         {downloadedModels.map((model) => (
-                          <tr
+                          <DataTableRow
                             key={model.id}
                             className={cx(
-                              'cursor-pointer border-t border-border-subtle hover:bg-surface/50',
+                              'cursor-pointer hover:bg-surface/50',
                               model.selected && 'bg-accent/10',
                             )}
                             onClick={() => {
@@ -921,15 +926,15 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                               setDirty(true);
                             }}
                           >
-                            <td className="min-w-0 px-3 py-3">
+                            <DataTableCell className="min-w-0">
                               <div className="truncate font-medium text-primary">{model.title}</div>
                               <div className="mt-0.5 truncate text-xs text-secondary">{model.subtitle}</div>
-                            </td>
-                            <td className="px-3 py-3">
+                            </DataTableCell>
+                            <DataTableCell>
                               <Pill tone={model.runtime === 'mlx' ? 'success' : 'accent'}>{model.format}</Pill>
-                            </td>
-                            <td className="px-3 py-3 text-secondary">{model.size || '—'}</td>
-                            <td className="px-3 py-3">
+                            </DataTableCell>
+                            <DataTableCell className="text-secondary">{model.size || '—'}</DataTableCell>
+                            <DataTableCell>
                               {model.selected ? (
                                 <span className="inline-flex items-center gap-1 text-accent">✓ Selected</span>
                               ) : model.loaded ? (
@@ -937,8 +942,8 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                               ) : (
                                 <Pill>Ready</Pill>
                               )}
-                            </td>
-                            <td className="px-3 py-3" onClick={(event) => event.stopPropagation()}>
+                            </DataTableCell>
+                            <DataTableCell onClick={(event) => event.stopPropagation()}>
                               <div className="flex gap-2">
                                 {model.path ? (
                                   <ToolbarButton
@@ -956,17 +961,16 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                                   Delete
                                 </button>
                               </div>
-                            </td>
-                          </tr>
+                            </DataTableCell>
+                          </DataTableRow>
                         ))}
                         {!downloadedModels.length ? (
                           <DataTableEmptyRow colSpan={5} cellClassName="py-10">
                             No downloaded models yet. Go to Library to download one.
                           </DataTableEmptyRow>
                         ) : null}
-                      </tbody>
-                    </table>
-                  </div>
+                    </DataTableBody>
+                  </DataTable>
                 </SurfacePanel>
 
                 <SurfacePanel className="p-4">
@@ -1214,43 +1218,55 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                     </div>
                   </div>
 
-                  <div className="mt-5 overflow-x-auto rounded-lg border border-border-subtle/50 bg-background/15">
-                    <table className="w-full table-fixed text-left text-sm">
-                      <thead className="bg-surface/50 text-xs uppercase tracking-[0.12em] text-dim">
-                        <tr>
-                          <th className="w-[52%] px-3 py-2 font-medium">Model</th>
-                          <th className="w-24 px-3 py-2 font-medium">Format</th>
-                          <th className="w-28 px-3 py-2 font-medium">Downloads</th>
-                          <th className="hidden w-20 px-3 py-2 font-medium 2xl:table-cell">Likes</th>
-                          <th className="hidden w-28 px-3 py-2 font-medium 2xl:table-cell">Updated</th>
-                          <th className="w-36 px-3 py-2 font-medium">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                  <DataTable
+                    className="mt-5 rounded-lg border border-border-subtle/50 bg-background/15"
+                    tableClassName="table-fixed"
+                    columns={
+                      <colgroup>
+                        <col className="w-[52%]" />
+                        <col className="w-24" />
+                        <col className="w-28" />
+                        <col className="w-20" />
+                        <col className="w-28" />
+                        <col className="w-36" />
+                      </colgroup>
+                    }
+                  >
+                    <DataTableHead>
+                      <DataTableRow>
+                        <DataTableHeaderCell>Model</DataTableHeaderCell>
+                        <DataTableHeaderCell>Format</DataTableHeaderCell>
+                        <DataTableHeaderCell>Downloads</DataTableHeaderCell>
+                        <DataTableHeaderCell className="hidden 2xl:table-cell">Likes</DataTableHeaderCell>
+                        <DataTableHeaderCell className="hidden 2xl:table-cell">Updated</DataTableHeaderCell>
+                        <DataTableHeaderCell>Actions</DataTableHeaderCell>
+                      </DataTableRow>
+                    </DataTableHead>
+                    <DataTableBody>
                         {searchResults.map((model) => (
-                          <tr
+                          <DataTableRow
                             key={model.id}
                             className={cx(
-                              'border-t border-border-subtle hover:bg-surface/50',
+                              'hover:bg-surface/50',
                               model.id === selectedSearchId && 'bg-accent/10',
                             )}
                             onClick={() => void selectSearchModel(model.id)}
                           >
-                            <td className="min-w-0 px-3 py-3">
+                            <DataTableCell className="min-w-0">
                               <div className="truncate font-medium text-primary">{model.id}</div>
                               <div className="mt-0.5 truncate text-xs text-secondary">
                                 {model.pipelineTag || model.tags.slice(0, 3).join(' · ') || 'model'}
                               </div>
-                            </td>
-                            <td className="px-3 py-3">
+                            </DataTableCell>
+                            <DataTableCell>
                               <Pill tone={model.format === 'gguf' ? 'accent' : model.format === 'mlx' ? 'success' : 'muted'}>
                                 {model.format.toUpperCase()}
                               </Pill>
-                            </td>
-                            <td className="px-3 py-3 text-secondary">{model.downloads.toLocaleString()}</td>
-                            <td className="hidden px-3 py-3 text-secondary 2xl:table-cell">{model.likes.toLocaleString()}</td>
-                            <td className="hidden px-3 py-3 text-secondary 2xl:table-cell">{formatDate(model.lastModified)}</td>
-                            <td className="px-3 py-3">
+                            </DataTableCell>
+                            <DataTableCell className="text-secondary">{model.downloads.toLocaleString()}</DataTableCell>
+                            <DataTableCell className="hidden text-secondary 2xl:table-cell">{model.likes.toLocaleString()}</DataTableCell>
+                            <DataTableCell className="hidden text-secondary 2xl:table-cell">{formatDate(model.lastModified)}</DataTableCell>
+                            <DataTableCell>
                               <RowActionsMenu
                                 label={`More actions for ${model.id}`}
                                 actions={[
@@ -1266,15 +1282,14 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                                   },
                                 ]}
                               />
-                            </td>
-                          </tr>
+                            </DataTableCell>
+                          </DataTableRow>
                         ))}
                         {!searchResults.length ? (
                           <DataTableEmptyRow colSpan={6}>Search Hugging Face to find MLX and GGUF models.</DataTableEmptyRow>
                         ) : null}
-                      </tbody>
-                    </table>
-                  </div>
+                    </DataTableBody>
+                  </DataTable>
                 </SurfacePanel>
 
                 <SurfacePanel className="p-5">
@@ -1285,30 +1300,29 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                     </div>
                     <ToolbarButton onClick={() => void refresh()}>Refresh</ToolbarButton>
                   </div>
-                  <div className="mt-4 overflow-x-auto rounded-lg border border-border-subtle/50 bg-background/15">
-                    <table className="w-full text-left text-sm">
-                      <thead className="bg-surface/50 text-xs uppercase tracking-[0.12em] text-dim">
-                        <tr>
-                          <th className="px-3 py-2 font-medium">Model</th>
-                          <th className="px-3 py-2 font-medium">Format</th>
-                          <th className="px-3 py-2 font-medium">Size</th>
-                          <th className="px-3 py-2 font-medium">Modified</th>
-                          <th className="px-3 py-2 font-medium">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                  <DataTable className="mt-4 rounded-lg border border-border-subtle/50 bg-background/15">
+                    <DataTableHead>
+                      <DataTableRow>
+                        <DataTableHeaderCell>Model</DataTableHeaderCell>
+                        <DataTableHeaderCell>Format</DataTableHeaderCell>
+                        <DataTableHeaderCell>Size</DataTableHeaderCell>
+                        <DataTableHeaderCell>Modified</DataTableHeaderCell>
+                        <DataTableHeaderCell>Actions</DataTableHeaderCell>
+                      </DataTableRow>
+                    </DataTableHead>
+                    <DataTableBody>
                         {downloadedModels.map((model) => (
-                          <tr key={model.id} className="border-t border-border-subtle">
-                            <td className="min-w-0 px-3 py-3">
+                          <DataTableRow key={model.id}>
+                            <DataTableCell className="min-w-0">
                               <div className="truncate font-medium text-primary">{model.title}</div>
                               <div className="mt-0.5 truncate text-xs text-secondary">{model.subtitle}</div>
-                            </td>
-                            <td className="px-3 py-3">
+                            </DataTableCell>
+                            <DataTableCell>
                               <Pill tone={model.runtime === 'mlx' ? 'success' : 'accent'}>{model.format}</Pill>
-                            </td>
-                            <td className="px-3 py-3 text-secondary">{model.size || '—'}</td>
-                            <td className="px-3 py-3 text-secondary">{formatDate(model.modified)}</td>
-                            <td className="px-3 py-3">
+                            </DataTableCell>
+                            <DataTableCell className="text-secondary">{model.size || '—'}</DataTableCell>
+                            <DataTableCell className="text-secondary">{formatDate(model.modified)}</DataTableCell>
+                            <DataTableCell>
                               <RowActionsMenu
                                 label={`More actions for ${model.title}`}
                                 disabled={Boolean(busy)}
@@ -1337,17 +1351,16 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                                   },
                                 ]}
                               />
-                            </td>
-                          </tr>
+                            </DataTableCell>
+                          </DataTableRow>
                         ))}
                         {!downloadedModels.length ? (
                           <DataTableEmptyRow colSpan={5} cellClassName="py-10">
                             No downloaded models yet.
                           </DataTableEmptyRow>
                         ) : null}
-                      </tbody>
-                    </table>
-                  </div>
+                    </DataTableBody>
+                  </DataTable>
                 </SurfacePanel>
               </main>
               {libraryRail}
