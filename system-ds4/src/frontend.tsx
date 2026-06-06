@@ -11,6 +11,7 @@ import {
   Pill,
   ProgressBar,
   Select,
+  SegmentedControl,
   SurfacePanel,
   TextInput,
 } from '@neon-pilot/extensions/ui';
@@ -562,24 +563,15 @@ export function Ds4RuntimeSettings({ pa }: { pa: ExtensionClient }) {
                 {busy === 'install-rtk' ? 'Installing' : 'Install RTK'}
               </Button>
             ) : null}
-            <div className="flex rounded-md border border-border-subtle bg-base/50 p-0.5">
-              <button
-                type="button"
-                className={`rounded px-2.5 py-1.5 text-[12px] ${shellCompression === 'off' ? 'bg-surface text-primary' : 'text-secondary hover:text-primary'}`}
-                onClick={() => void saveShellCompression('off')}
-                disabled={busy !== null}
-              >
-                Off
-              </button>
-              <button
-                type="button"
-                className={`rounded px-2.5 py-1.5 text-[12px] ${shellCompression === 'rtk' ? 'bg-surface text-primary' : 'text-secondary hover:text-primary'}`}
-                onClick={() => void saveShellCompression('rtk')}
-                disabled={busy !== null || !rtk?.valid}
-              >
-                RTK
-              </button>
-            </div>
+            <SegmentedControl
+              ariaLabel="Shell output compression"
+              value={shellCompression}
+              options={[
+                { label: 'Off', value: 'off', disabled: busy !== null },
+                { label: 'RTK', value: 'rtk', disabled: busy !== null || !rtk?.valid },
+              ]}
+              onChange={(nextValue) => void saveShellCompression(nextValue)}
+            />
           </div>
         </div>
         {shellCompression === 'rtk' && rtk?.valid ? (
