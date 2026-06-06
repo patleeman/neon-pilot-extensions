@@ -15,7 +15,10 @@ import {
   DataTableRow,
   Disclosure,
   Field,
+  IconButton,
   MetricTile,
+  MenuItem,
+  MenuShell,
   Notice,
   Pill,
   ProgressBar,
@@ -24,6 +27,7 @@ import {
   RuntimeSection,
   RuntimeStrip,
   Select,
+  SegmentedControl,
   SurfacePanel,
   TerminalBlock,
   TextInput,
@@ -285,14 +289,10 @@ function RowActionsMenu({ label, disabled, actions }: { label: string; disabled?
     };
   }, [open, positionMenu]);
 
-  const menuButtonClass =
-    'w-full rounded-lg px-2.5 py-1.5 text-left text-[12px] text-secondary hover:bg-base hover:text-primary disabled:cursor-not-allowed disabled:opacity-50';
-
   return (
     <div ref={rootRef} className="relative flex justify-end" onClick={(event) => event.stopPropagation()}>
-      <button
-        type="button"
-        className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border-subtle/70 bg-surface text-secondary hover:bg-base hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+      <IconButton
+        compact
         disabled={disabled}
         title={label}
         aria-label={label}
@@ -304,18 +304,16 @@ function RowActionsMenu({ label, disabled, actions }: { label: string; disabled?
         }}
       >
         <MoreIcon />
-      </button>
+      </IconButton>
       {open ? (
-        <div
-          className="fixed z-50 w-40 rounded-xl border border-border-subtle bg-surface p-1.5 shadow-xl"
-          role="menu"
+        <MenuShell
+          className="fixed z-50 w-40 p-1.5"
           style={menuPosition ? { top: menuPosition.top, right: menuPosition.right } : undefined}
         >
           {actions.map((action) => (
-            <button
+            <MenuItem
               key={action.label}
-              type="button"
-              className={cx(menuButtonClass, action.danger && 'text-danger hover:text-danger')}
+              className={cx(action.danger && 'text-danger hover:text-danger')}
               disabled={action.disabled}
               onClick={(event) => {
                 event.stopPropagation();
@@ -324,9 +322,9 @@ function RowActionsMenu({ label, disabled, actions }: { label: string; disabled?
               }}
             >
               {action.label}
-            </button>
+            </MenuItem>
           ))}
-        </div>
+        </MenuShell>
       ) : null}
     </div>
   );
@@ -823,23 +821,16 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
 
         {error ? <Notice tone="danger">{error}</Notice> : null}
 
-        <div className="flex flex-wrap items-center gap-1 border-b border-border-subtle/70 pb-5 text-[12px]">
-          {[
-            ['server', 'Server'],
-            ['library', 'Library'],
-          ].map(([id, label]) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => setPage(id as PageId)}
-              className={cx(
-                'rounded-xl px-3 py-2 font-medium transition-colors',
-                page === id ? 'bg-surface text-primary shadow-sm' : 'text-secondary hover:bg-surface/60 hover:text-primary',
-              )}
-            >
-              {label}
-            </button>
-          ))}
+        <div className="border-b border-border-subtle/70 pb-5">
+          <SegmentedControl
+            ariaLabel="Local models page"
+            value={page}
+            options={[
+              { label: 'Server', value: 'server' },
+              { label: 'Library', value: 'library' },
+            ]}
+            onChange={setPage}
+          />
         </div>
 
         <div className="flex gap-5">
@@ -925,14 +916,14 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                                     Reveal in Finder
                                   </ToolbarButton>
                                 ) : null}
-                                <button
+                                <ToolbarButton
                                   type="button"
                                   disabled={Boolean(busy)}
                                   onClick={() => void deleteDownloadedModel(model)}
-                                  className="rounded-lg border border-danger/50 px-3 py-2 text-sm text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-50"
+                                  className="border-danger/50 text-danger hover:bg-danger/10"
                                 >
                                   Delete
-                                </button>
+                                </ToolbarButton>
                               </div>
                             </DataTableCell>
                           </DataTableRow>
