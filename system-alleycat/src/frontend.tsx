@@ -1,4 +1,5 @@
 import type { NativeExtensionClient } from '@neon-pilot/extensions';
+import { Textarea } from '@neon-pilot/extensions/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface AlleycatPairPayload {
@@ -160,7 +161,7 @@ function AlleycatPanel({ pa }: AlleycatSettingsPanelProps) {
             </div>
             <details className="self-start">
               <summary className="cursor-pointer text-[12px] font-medium text-secondary hover:text-primary">Pair payload</summary>
-              <textarea
+              <Textarea
                 readOnly
                 className={`${MONO} mt-2 min-h-[9rem] resize-none`}
                 value={pairPayloadJson}

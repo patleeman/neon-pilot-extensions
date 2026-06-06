@@ -1,6 +1,6 @@
 import type { RelatedConversationSearchResult } from '@neon-pilot/extensions/data';
 import { summarizeConversationCwd, timeAgo } from '@neon-pilot/extensions/data';
-import { cx, Keycap } from '@neon-pilot/extensions/ui';
+import { Checkbox, cx, Keycap } from '@neon-pilot/extensions/ui';
 
 const DEFAULT_RELATED_THREAD_HOTKEY_LIMIT = 9;
 const WEAK_SELECTED_RELATED_THREAD_SCORE = 6;
@@ -98,13 +98,12 @@ export function SuggestedContextPanel({ panelContext }: { panelContext: Suggeste
                     busy && 'cursor-progress',
                   )}
                 >
-                  <input
+                  <Checkbox
                     id={inputId}
-                    type="checkbox"
                     checked={checked}
                     onChange={() => onToggle(result.sessionId)}
                     className={cx(
-                      "h-4 w-4 shrink-0 appearance-none rounded-[4px] border border-border-default bg-surface/80 text-accent shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-[background-color,border-color,box-shadow,transform] duration-150 after:block after:h-[0.42rem] after:w-[0.22rem] after:translate-x-[0.26rem] after:translate-y-[0.01rem] after:rotate-45 after:border-b-[2px] after:border-r-[2px] after:border-transparent after:opacity-0 after:content-[''] checked:border-accent/70 checked:bg-accent/15 checked:shadow-[0_0_0_1px_rgba(var(--color-accent),0.12)] checked:after:border-current checked:after:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40",
+                      'shrink-0',
                       !checked && 'group-hover:border-accent/30 group-hover:bg-elevated/70',
                       busy && 'cursor-progress',
                     )}
