@@ -1,4 +1,19 @@
-import { Checkbox, Select, TextInput } from '@neon-pilot/extensions/ui';
+import {
+  Button,
+  Checkbox,
+  CodeBlock,
+  DashboardGrid,
+  DashboardGridCell,
+  Disclosure,
+  MetricTile,
+  Notice,
+  PanelHeader,
+  Pill,
+  ProgressBar,
+  Select,
+  SurfacePanel,
+  TextInput,
+} from '@neon-pilot/extensions/ui';
 import { useCallback, useEffect, useState } from 'react';
 
 type ExtensionClient = {
@@ -96,9 +111,6 @@ const DEFAULT_MODEL_SLOTS: Ds4ModelSlot[] = [
   },
 ];
 
-const BUTTON_CLASS =
-  'rounded-md border border-border-subtle bg-surface/35 px-2.5 py-1.5 text-[12px] font-medium text-secondary hover:bg-surface/65 hover:text-primary disabled:cursor-default disabled:opacity-50';
-
 function statusLabel(status: Ds4Status | null): { text: string; tone: 'ok' | 'warn' | 'danger' | 'muted' } {
   if (!status) return { text: 'Checking', tone: 'muted' };
   if (status.reachable) return { text: 'Alive', tone: 'ok' };
@@ -114,6 +126,13 @@ function dotClass(tone: ReturnType<typeof statusLabel>['tone']) {
   if (tone === 'danger') return 'bg-danger';
   if (tone === 'warn') return 'bg-amber-400';
   return 'bg-dim';
+}
+
+function pillTone(tone: ReturnType<typeof statusLabel>['tone']): 'success' | 'warning' | 'danger' | 'muted' {
+  if (tone === 'ok') return 'success';
+  if (tone === 'danger') return 'danger';
+  if (tone === 'warn') return 'warning';
+  return 'muted';
 }
 
 function errorText(error: unknown): string {
@@ -442,52 +461,52 @@ export function Ds4RuntimeSettings({ pa }: { pa: ExtensionClient }) {
           <div className="flex items-center gap-2 text-primary">
             <span className={`h-2 w-2 rounded-full ${dotClass(label.tone)}`} />
             <span className="font-medium">DS4 runtime</span>
-            <span className="text-secondary">{label.text}</span>
+            <Pill tone={pillTone(label.tone)}>{label.text}</Pill>
           </div>
           <p className="mt-1 text-[12px] text-dim">{status?.baseUrl ?? 'http://127.0.0.1:8000/v1'}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button type="button" className={BUTTON_CLASS} onClick={() => void refresh()} disabled={busy !== null}>
+          <Button onClick={() => void refresh()} disabled={busy !== null}>
             Refresh
-          </button>
-          <button type="button" className={BUTTON_CLASS} onClick={() => void run('setup')} disabled={busy !== null || bootstrapRunning}>
+          </Button>
+          <Button onClick={() => void run('setup')} disabled={busy !== null || bootstrapRunning}>
             {busy === 'setup' ? 'Setting up' : runtimeInstalled ? 'Re-run setup' : 'Setup'}
-          </button>
-          <button type="button" className={BUTTON_CLASS} onClick={() => void run('start')} disabled={busy !== null || !runtimeInstalled}>
+          </Button>
+          <Button onClick={() => void run('start')} disabled={busy !== null || !runtimeInstalled}>
             {busy === 'start' ? 'Starting' : 'Start'}
-          </button>
-          <button type="button" className={BUTTON_CLASS} onClick={() => void run('stop')} disabled={busy !== null || !status?.server?.managedRunning}>
+          </Button>
+          <Button onClick={() => void run('stop')} disabled={busy !== null || !status?.server?.managedRunning}>
             {busy === 'stop' ? 'Stopping' : 'Stop'}
-          </button>
-          <button type="button" className={BUTTON_CLASS} onClick={() => void run('restart')} disabled={busy !== null || !runtimeInstalled}>
+          </Button>
+          <Button onClick={() => void run('restart')} disabled={busy !== null || !runtimeInstalled}>
             {busy === 'restart' ? 'Restarting' : 'Restart'}
-          </button>
+          </Button>
         </div>
       </div>
 
-      {error ? <div className="rounded-md border border-danger/30 bg-danger/10 p-3 text-[12px] text-danger">{error}</div> : null}
+      {error ? <Notice tone="danger">{error}</Notice> : null}
 
-      <div className="rounded-md border border-border-subtle bg-surface/30 p-3">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">Optimizations</p>
-            <p className="mt-1 text-primary">
-              {optimizations.every((item) => item.ready) ? 'All DS4 optimizations ready' : 'Some DS4 optimizations need attention'}
-            </p>
-          </div>
-          <span className="text-[12px] text-dim">
-            {optimizations.filter((item) => item.ready).length}/{optimizations.length}
-          </span>
-        </div>
+      <SurfacePanel muted className="p-3">
+        <PanelHeader
+          title="Optimizations"
+          meta={`${optimizations.filter((item) => item.ready).length}/${optimizations.length}`}
+          className="mb-3"
+          titleClassName="text-[11px]"
+        />
+        <p className="text-primary">
+          {optimizations.every((item) => item.ready) ? 'All DS4 optimizations ready' : 'Some DS4 optimizations need attention'}
+        </p>
         <div className="mt-3 grid gap-2 md:grid-cols-3">
           {optimizations.map((item) => (
             <ReadyItem key={item.label} label={item.label} ready={item.ready} />
           ))}
         </div>
-      </div>
+      </SurfacePanel>
 
-      <details className="rounded-md border border-border-subtle bg-surface/40 p-3" open={!runtimeInstalled || bootstrapRunning}>
-        <summary className="cursor-pointer list-none">
+      <Disclosure
+        open={!runtimeInstalled || bootstrapRunning}
+        className="bg-surface/40"
+        summary={
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">Setup progress</p>
@@ -495,42 +514,36 @@ export function Ds4RuntimeSettings({ pa }: { pa: ExtensionClient }) {
             </div>
             <span className="font-mono text-[12px] text-dim">{Math.round(progress)}%</span>
           </div>
-        </summary>
-        <div className="mt-3 h-2 overflow-hidden rounded-full bg-base">
-          <div className="h-full rounded-full bg-accent transition-[width]" style={{ width: `${progress}%` }} />
-        </div>
+        }
+      >
+        <ProgressBar value={progress} label="DS4 setup progress" />
         <div className="mt-3 grid gap-2 md:grid-cols-3">
           {steps.map((step) => (
             <Step key={step.id} title={step.title} state={stepState(step, status)} />
           ))}
         </div>
-      </details>
+      </Disclosure>
 
-      <div className="grid gap-2 md:grid-cols-2">
+      <DashboardGrid columns={2} divide="both">
         <Info label="Repository" value={status?.runtime?.repoInstalled ? 'Installed' : 'Missing'} />
         <Info label="Server binary" value={status?.runtime?.serverInstalled ? 'Installed' : 'Missing'} />
         <Info label="Model file" value={`${activeSlot?.name ?? 'Selected model'}: ${status?.runtime?.modelInstalled ? formatBytes(status.runtime.modelBytes) : 'Missing'}`} />
         <Info label="Server process" value={status?.server?.managedRunning ? `Running${status.server.managedPid ? ` (${status.server.managedPid})` : ''}` : 'Stopped'} />
-      </div>
+      </DashboardGrid>
 
-      <div className="rounded-md border border-border-subtle bg-surface/30 p-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">Local tools</p>
+      <SurfacePanel muted className="p-3">
+        <PanelHeader title="Local tools" className="mb-2" titleClassName="text-[11px]" />
         <div className="mt-2 flex flex-wrap gap-2">
           {['git', 'make', 'cc', 'curl'].map((tool) => (
-            <span
-              key={tool}
-              className={`rounded border px-2 py-1 text-[12px] ${
-                tools[tool] ? 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300' : 'border-amber-400/30 bg-amber-400/10 text-amber-300'
-              }`}
-            >
+            <Pill key={tool} tone={tools[tool] ? 'success' : 'warning'} mono>
               {tool}: {tools[tool] ? 'ready' : 'missing'}
-            </span>
+            </Pill>
           ))}
         </div>
         <p className="mt-2 text-[12px] text-dim">On macOS, Command Line Tools provide git, make, cc, and curl. Run xcode-select --install if any are missing.</p>
-      </div>
+      </SurfacePanel>
 
-      <div className="rounded-md border border-border-subtle bg-surface/30 p-3">
+      <SurfacePanel muted className="p-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">Shell output compression</p>
@@ -545,9 +558,9 @@ export function Ds4RuntimeSettings({ pa }: { pa: ExtensionClient }) {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {!rtk?.valid ? (
-              <button type="button" className={BUTTON_CLASS} onClick={() => void installRtk()} disabled={busy !== null}>
+              <Button onClick={() => void installRtk()} disabled={busy !== null}>
                 {busy === 'install-rtk' ? 'Installing' : 'Install RTK'}
-              </button>
+              </Button>
             ) : null}
             <div className="flex rounded-md border border-border-subtle bg-base/50 p-0.5">
               <button
@@ -572,26 +585,26 @@ export function Ds4RuntimeSettings({ pa }: { pa: ExtensionClient }) {
         {shellCompression === 'rtk' && rtk?.valid ? (
           <p className="mt-3 text-[12px] text-dim">Eligible DS4 bash commands are compacted automatically. Run ds4 compression off to disable it from a DS4 shell.</p>
         ) : null}
-      </div>
+      </SurfacePanel>
 
-      <div className="rounded-md border border-border-subtle bg-surface/40 p-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">Setup</p>
+      <SurfacePanel muted className="p-3">
+        <PanelHeader title="Setup" className="mb-2" titleClassName="text-[11px]" />
         <p className="mt-2">
           Setup clones antirez/ds4, builds ds4-server, and downloads the selected GGUF into extension-owned app storage.
           If the selected model file is already present, setup skips the download and can finish offline.
         </p>
         {status?.runtime?.managedRoot ? <p className="mt-2 break-all font-mono text-[11px] text-dim">{status.runtime.managedRoot}</p> : null}
-      </div>
+      </SurfacePanel>
 
-      <div className="rounded-md border border-border-subtle bg-surface/30 p-3">
+      <SurfacePanel muted className="p-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">Model slots</p>
             <p className="mt-2 text-[12px] text-dim">Enable slots to expose several DS4 models. The active slot controls setup and the managed server GGUF.</p>
           </div>
-          <button type="button" className={BUTTON_CLASS} onClick={addModelSlot} disabled={busy !== null || advancedDraft.modelSlots.length >= 6}>
+          <Button onClick={addModelSlot} disabled={busy !== null || advancedDraft.modelSlots.length >= 6}>
             Add slot
-          </button>
+          </Button>
         </div>
         <label className="mt-3 block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">Active runtime slot</span>
@@ -609,16 +622,16 @@ export function Ds4RuntimeSettings({ pa }: { pa: ExtensionClient }) {
         </label>
         <div className="mt-3 space-y-3">
           {advancedDraft.modelSlots.map((slot, index) => (
-            <div key={`${slot.id}-${index}`} className="rounded-md border border-border-subtle bg-base/30 p-3">
+            <SurfacePanel key={`${slot.id}-${index}`} muted className="p-3">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <label className="flex items-center gap-2 text-[12px] text-primary">
                   <Checkbox checked={slot.enabled} onChange={(event) => updateModelSlot(index, { enabled: event.currentTarget.checked })} />
                   Expose in picker
                 </label>
                 <div className="flex items-center gap-2">
-                  <button type="button" className={BUTTON_CLASS} onClick={() => void run('setup', slot.id)} disabled={busy !== null || bootstrapRunning}>
+                  <Button onClick={() => void run('setup', slot.id)} disabled={busy !== null || bootstrapRunning}>
                     Setup this slot
-                  </button>
+                  </Button>
                   <span className="font-mono text-[11px] text-dim">{slot.id}</span>
                 </div>
               </div>
@@ -630,41 +643,41 @@ export function Ds4RuntimeSettings({ pa }: { pa: ExtensionClient }) {
                 <TextSetting label="DS4 download variant" value={slot.downloadVariant ?? ''} onChange={(downloadVariant) => updateModelSlot(index, { downloadVariant })} />
                 <TextSetting label="Direct download URL" value={slot.downloadUrl ?? ''} onChange={(downloadUrl) => updateModelSlot(index, { downloadUrl })} />
               </div>
-            </div>
+            </SurfacePanel>
           ))}
         </div>
-      </div>
+      </SurfacePanel>
 
-      <div className="rounded-md border border-border-subtle bg-surface/30 p-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">Maintenance</p>
+      <SurfacePanel muted className="p-3">
+        <PanelHeader title="Maintenance" className="mb-3" titleClassName="text-[11px]" />
         <div className="mt-3 flex flex-wrap gap-2">
-          <button type="button" className={BUTTON_CLASS} onClick={() => void runMaintenance('copy')} disabled={busy !== null}>
+          <Button onClick={() => void runMaintenance('copy')} disabled={busy !== null}>
             {busy === 'copy' ? 'Copying' : 'Copy diagnostics'}
-          </button>
-          <button type="button" className={BUTTON_CLASS} onClick={() => void runMaintenance('reveal-root')} disabled={busy !== null}>
+          </Button>
+          <Button onClick={() => void runMaintenance('reveal-root')} disabled={busy !== null}>
             Reveal runtime folder
-          </button>
-          <button type="button" className={BUTTON_CLASS} onClick={() => void runMaintenance('reveal-model')} disabled={busy !== null}>
+          </Button>
+          <Button onClick={() => void runMaintenance('reveal-model')} disabled={busy !== null}>
             Open model file location
-          </button>
-          <button type="button" className={BUTTON_CLASS} onClick={() => void run('repair')} disabled={busy !== null || bootstrapRunning}>
+          </Button>
+          <Button onClick={() => void run('repair')} disabled={busy !== null || bootstrapRunning}>
             {busy === 'repair' ? 'Repairing' : 'Reinstall / repair runtime'}
-          </button>
-          <button type="button" className={BUTTON_CLASS} onClick={() => void runMaintenance('clear-kv')} disabled={busy !== null}>
+          </Button>
+          <Button onClick={() => void runMaintenance('clear-kv')} disabled={busy !== null}>
             {busy === 'clear-kv' ? 'Clearing' : 'Clear KV cache'}
-          </button>
+          </Button>
         </div>
-      </div>
+      </SurfacePanel>
 
-      <div className="rounded-md border border-border-subtle bg-surface/30 p-3">
+      <SurfacePanel muted className="p-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">Advanced config</p>
             <p className="mt-2 text-[12px] text-dim">Tune DS4 model metadata and managed server launch flags. Restart DS4 after changing server settings.</p>
           </div>
-          <button type="button" className={BUTTON_CLASS} onClick={() => void saveAdvancedSettings()} disabled={busy !== null}>
+          <Button onClick={() => void saveAdvancedSettings()} disabled={busy !== null}>
             {busy === 'settings' ? 'Saving' : 'Save advanced'}
-          </button>
+          </Button>
         </div>
         <div className="mt-3 grid gap-3 md:grid-cols-3">
           <NumberSetting
@@ -718,7 +731,7 @@ export function Ds4RuntimeSettings({ pa }: { pa: ExtensionClient }) {
             onChange={(agentsPointers) => setAdvancedDraft((draft) => ({ ...draft, agentsPointers }))}
           />
         </div>
-      </div>
+      </SurfacePanel>
 
       {status?.bootstrap?.log ? <Log title="Bootstrap log" text={status.bootstrap.log} /> : null}
       {status?.server?.log ? <Log title="Server log" text={status.server.log} /> : null}
@@ -727,41 +740,29 @@ export function Ds4RuntimeSettings({ pa }: { pa: ExtensionClient }) {
 }
 
 function Step({ title, state }: { title: string; state: 'done' | 'active' | 'pending' | 'failed' }) {
-  const tone =
-    state === 'done'
-      ? 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300'
-      : state === 'active'
-        ? 'border-accent/40 bg-accent/10 text-primary'
-        : state === 'failed'
-          ? 'border-danger/30 bg-danger/10 text-danger'
-          : 'border-border-subtle bg-base/40 text-dim';
+  const tone = state === 'done' ? 'success' : state === 'active' ? 'accent' : state === 'failed' ? 'danger' : 'muted';
   return (
-    <div className={`flex items-center gap-2 rounded-md border px-2.5 py-2 ${tone}`}>
+    <Pill tone={tone} className="flex min-w-0 items-center gap-2 px-2.5 py-2">
       <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
       <span className="min-w-0 truncate text-[12px]">{title}</span>
-    </div>
+    </Pill>
   );
 }
 
 function ReadyItem({ label, ready }: { label: string; ready: boolean }) {
   return (
-    <div
-      className={`flex items-center gap-2 rounded-md border px-2.5 py-2 ${
-        ready ? 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300' : 'border-amber-400/30 bg-amber-400/10 text-amber-300'
-      }`}
-    >
+    <Pill tone={ready ? 'success' : 'warning'} className="flex min-w-0 items-center gap-2 px-2.5 py-2">
       <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
       <span className="min-w-0 truncate text-[12px]">{label}</span>
-    </div>
+    </Pill>
   );
 }
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-border-subtle bg-surface/30 p-3">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">{label}</p>
-      <p className="mt-1 text-primary">{value}</p>
-    </div>
+    <DashboardGridCell>
+      <MetricTile label={label} value={value} align="left" appearance="plain" />
+    </DashboardGridCell>
   );
 }
 
@@ -781,17 +782,19 @@ function NumberSetting({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="block rounded-md border border-border-subtle bg-base/30 p-3">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">{label}</span>
-      <TextInput
-        type="number"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(event) => onChange(event.currentTarget.value)}
-        className="mt-2 bg-base font-mono text-[12px]"
-      />
+    <label className="block">
+      <SurfacePanel muted className="p-3">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">{label}</span>
+        <TextInput
+          type="number"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(event) => onChange(event.currentTarget.value)}
+          className="mt-2 bg-base font-mono text-[12px]"
+        />
+      </SurfacePanel>
     </label>
   );
 }
@@ -822,21 +825,24 @@ function ToggleSetting({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-md border border-border-subtle bg-base/30 p-3">
-      <Checkbox checked={checked} onChange={(event) => onChange(event.currentTarget.checked)} className="mt-1" />
-      <span className="min-w-0">
-        <span className="block text-[12px] font-medium text-primary">{label}</span>
-        <span className="mt-1 block text-[12px] text-dim">{description}</span>
-      </span>
+    <label className="block cursor-pointer">
+      <SurfacePanel muted className="flex items-start gap-3 p-3">
+        <Checkbox checked={checked} onChange={(event) => onChange(event.currentTarget.checked)} className="mt-1" />
+        <span className="min-w-0">
+          <span className="block text-[12px] font-medium text-primary">{label}</span>
+          <span className="mt-1 block text-[12px] text-dim">{description}</span>
+        </span>
+      </SurfacePanel>
     </label>
   );
 }
 
 function Log({ title, text }: { title: string; text: string }) {
   return (
-    <details className="rounded-md border border-border-subtle bg-surface/30 p-3">
-      <summary className="cursor-pointer text-[12px] font-medium text-primary">{title}</summary>
-      <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] text-secondary">{text}</pre>
-    </details>
+    <Disclosure summary={<span className="text-[12px] font-medium text-primary">{title}</span>}>
+      <CodeBlock compact className="max-h-56 overflow-auto">
+        {text}
+      </CodeBlock>
+    </Disclosure>
   );
 }
