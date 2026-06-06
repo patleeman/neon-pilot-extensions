@@ -26,6 +26,13 @@
       "tag": "v0.10.2"
     },
     {
+      "id": "system-auto-router",
+      "path": "system-auto-router",
+      "channel": "stable",
+      "version": "0.1.0",
+      "tag": "v0.10.2"
+    },
+    {
       "id": "system-browser",
       "path": "system-browser",
       "channel": "stable",
