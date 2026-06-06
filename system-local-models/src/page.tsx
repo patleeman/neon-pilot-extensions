@@ -1,5 +1,17 @@
 import type { ExtensionSurfaceProps, NativeExtensionClient } from '@neon-pilot/extensions';
-import { AppPageIntro, AppPageLayout, cx, ToolbarButton } from '@neon-pilot/extensions/ui';
+import {
+  AppPageIntro,
+  AppPageLayout,
+  Field,
+  Notice,
+  Pill,
+  ProgressBar,
+  Select,
+  SurfacePanel,
+  TextInput,
+  ToolbarButton,
+  cx,
+} from '@neon-pilot/extensions/ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 type RuntimeUpdateStatus = {
@@ -205,55 +217,6 @@ function detectFormat(modelId: string, tags: string[] = []): 'mlx' | 'gguf' | 'u
   if (lower.includes('gguf')) return 'gguf';
   if (lower.includes('mlx')) return 'mlx';
   return 'unknown';
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block space-y-1 text-xs text-secondary">
-      <span className="font-medium">{label}</span>
-      {children}
-    </label>
-  );
-}
-
-function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <input
-      {...props}
-      className={cx(
-        'w-full rounded-md border border-border-subtle/60 bg-surface px-2.5 py-1.5 text-sm text-primary outline-none focus-visible:border-accent/80',
-        props.className,
-      )}
-    />
-  );
-}
-
-function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return (
-    <select
-      {...props}
-      className={cx(
-        'w-full rounded-md border border-border-subtle/60 bg-surface px-2.5 py-1.5 text-sm text-primary outline-none focus-visible:border-accent/80',
-        props.className,
-      )}
-    />
-  );
-}
-
-function Pill({ children, tone = 'muted' }: { children: React.ReactNode; tone?: 'muted' | 'success' | 'warning' | 'accent' }) {
-  return (
-    <span
-      className={cx(
-        'inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium',
-        tone === 'success' && 'bg-success/15 text-success',
-        tone === 'warning' && 'bg-warning/15 text-warning',
-        tone === 'accent' && 'bg-accent/15 text-accent',
-        tone === 'muted' && 'bg-surface text-secondary',
-      )}
-    >
-      {children}
-    </span>
-  );
 }
 
 function MoreIcon() {
@@ -847,7 +810,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
         />
 
         {downloadMessage ? (
-          <div className="rounded-lg border border-border-subtle bg-surface/25 px-3 py-3">
+          <SurfacePanel muted className="px-3 py-3">
             <div className="flex items-center justify-between gap-3 text-sm">
               <div className="min-w-0 text-secondary">
                 <span className="font-medium text-primary">{downloadMessage}</span>
@@ -859,18 +822,14 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
               </ToolbarButton>
             </div>
             {setupRunning || ggufDownload?.progress !== null ? (
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-background/60">
-                <div className="h-full rounded-full bg-accent" style={{ width: `${Math.max(2, setupProgress || 2)}%` }} />
-              </div>
+              <ProgressBar value={setupProgress || 2} minPercent={2} className="mt-3" label="Download progress" />
             ) : (
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-background/60">
-                <div className="h-full w-1/2 animate-pulse rounded-full bg-accent/70" />
-              </div>
+              <ProgressBar value={50} minPercent={50} className="mt-3" barClassName="animate-pulse" label="Download progress" />
             )}
-          </div>
+          </SurfacePanel>
         ) : null}
 
-        {error ? <div className="rounded-lg border border-danger/40 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</div> : null}
+        {error ? <Notice tone="danger">{error}</Notice> : null}
 
         <div className="flex flex-wrap items-center gap-1 border-b border-border-subtle/70 pb-5 text-[12px]">
           {[

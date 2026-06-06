@@ -55,6 +55,16 @@ Rules:
 - Keep host imports external: `@neon-pilot/extensions`, `@neon-pilot/extensions/ui`, React, and approved backend subpaths are provided by Neon Pilot.
 - Declare Neon Pilot compatibility in the extension manifest.
 
+## UI design system
+
+Extension frontends should use Neon Pilot's shared UI SDK:
+
+```tsx
+import { Field, Notice, Pill, ProgressBar, SurfacePanel, TextInput, ToolbarButton } from '@neon-pilot/extensions/ui';
+```
+
+Do not copy local versions of foundation controls such as fields, inputs, selects, pills, notices, progress bars, option rows, panels, or toolbar buttons. If a reusable control is missing, add it to `packages/ui` in the app repo first, document it in `docs/design-system.md`, then consume it here through `@neon-pilot/extensions/ui`.
+
 Example compatibility metadata:
 
 ```json

@@ -1,5 +1,18 @@
 import type { ExtensionSurfaceProps } from '@neon-pilot/extensions';
-import { AppPageIntro, AppPageLayout, cx, ToolbarButton } from '@neon-pilot/extensions/ui';
+import {
+  AppPageIntro,
+  AppPageLayout,
+  ChoiceRow,
+  Field,
+  Notice,
+  PanelHeader,
+  Pill,
+  ProgressBar,
+  SurfacePanel,
+  TextInput,
+  ToolbarButton,
+  cx,
+} from '@neon-pilot/extensions/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 type ServerHealth = { reachable: boolean; models?: string[] };
@@ -18,43 +31,6 @@ type Status = {
   openrouterAuth?: { configured: boolean; source: 'stored' | 'environment' | 'none' };
   log: string;
 };
-
-function Pill({ children, tone = 'muted' }: { children: React.ReactNode; tone?: 'muted' | 'success' | 'warning' | 'accent' }) {
-  return (
-    <span
-      className={cx(
-        'inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium',
-        tone === 'success' && 'bg-success/15 text-success',
-        tone === 'warning' && 'bg-warning/15 text-warning',
-        tone === 'accent' && 'bg-accent/15 text-accent',
-        tone === 'muted' && 'bg-surface text-secondary',
-      )}
-    >
-      {children}
-    </span>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block space-y-1 text-xs text-secondary">
-      <span className="font-medium">{label}</span>
-      {children}
-    </label>
-  );
-}
-
-function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <input
-      {...props}
-      className={cx(
-        'w-full rounded-md border border-border-subtle/60 bg-surface px-2.5 py-1.5 text-sm text-primary outline-none focus-visible:border-accent/80',
-        props.className,
-      )}
-    />
-  );
-}
 
 export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
   const [status, setStatus] = useState<Status | null>(null);
@@ -231,10 +207,10 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
           }
         />
 
-        {error ? <div className="rounded-lg border border-danger/40 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</div> : null}
+        {error ? <Notice tone="danger">{error}</Notice> : null}
 
         {setupRunning ? (
-          <div className="rounded-lg border border-border-subtle bg-surface/25 px-3 py-3">
+          <SurfacePanel muted className="px-3 py-3">
             <div className="flex items-center justify-between gap-3 text-sm">
               <div className="min-w-0 flex-1 text-secondary">
                 <span className="font-medium text-primary">Installing mlx-vlm and downloading model…</span>
@@ -256,18 +232,13 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
                 Cancel
               </ToolbarButton>
             </div>
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-background/60">
-              <div className="h-full w-1/3 animate-pulse rounded-full bg-accent/70" />
-            </div>
-          </div>
+            <ProgressBar value={33} minPercent={33} className="mt-3" barClassName="animate-pulse" label="Setup progress" />
+          </SurfacePanel>
         ) : null}
 
         {/* Backend settings */}
-        <section className="rounded-xl border border-border-subtle bg-surface p-5">
-          <div>
-            <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-primary">Backend</h2>
-            <p className="mt-1 text-sm text-secondary">Choose where video analysis runs.</p>
-          </div>
+        <SurfacePanel className="p-5">
+          <PanelHeader title="Backend" meta="Choose where video analysis runs." titleClassName="text-[26px] leading-tight" />
 
           <div className="mt-5 grid gap-2 sm:grid-cols-2">
             {(
@@ -284,26 +255,15 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
                 },
               ] as const
             ).map((option) => (
-              <button
+              <ChoiceRow
                 key={option.id}
-                type="button"
                 onClick={() => void setBackend(option.id)}
-                className={cx(
-                  'rounded-xl border p-4 text-left transition-colors',
-                  currentBackend === option.id ? 'border-accent/55 bg-accent/10' : 'border-border-subtle hover:bg-surface/60',
-                )}
+                checked={currentBackend === option.id}
+                label={option.label}
+                details={option.description}
               >
-                <div className="flex items-center gap-2">
-                  <span
-                    className={cx(
-                      'h-3 w-3 rounded-full border-2',
-                      currentBackend === option.id ? 'border-accent bg-accent' : 'border-dim bg-transparent',
-                    )}
-                  />
-                  <span className="text-sm font-medium text-primary">{option.label}</span>
-                </div>
-                <p className="mt-1.5 pl-5 text-xs text-secondary">{option.description}</p>
-              </button>
+                <span className="sr-only">{currentBackend === option.id ? 'Selected' : 'Not selected'}</span>
+              </ChoiceRow>
             ))}
           </div>
 
@@ -324,7 +284,7 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
                   </ToolbarButton>
                 </div>
               </Field>
-              <div className="rounded-md border border-border-subtle bg-elevated p-3 text-xs text-secondary">
+              <Notice tone={openrouterAuth?.configured ? 'success' : openrouterAuth ? 'warning' : 'info'}>
                 {!openrouterAuth ? (
                   <>Checking OpenRouter API key status…</>
                 ) : openrouterAuth.configured ? (
@@ -342,21 +302,24 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
                     , or set <span className="font-mono text-primary">OPENROUTER_API_KEY</span>. The model must support video input.
                   </>
                 )}
-              </div>
+              </Notice>
             </div>
           ) : null}
-        </section>
+        </SurfacePanel>
 
         {/* Local runtime section */}
         {currentBackend === 'local' ? (
-          <section className="rounded-xl border border-border-subtle bg-surface p-5">
+          <SurfacePanel className="p-5">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <div>
-                <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-primary">Local Runtime</h2>
-                <p className="mt-1 text-sm text-secondary">
+              <PanelHeader
+                title="Local Runtime"
+                titleClassName="text-[26px] leading-tight"
+                meta={
+                  <span>
                   mlx-vlm runs Nemotron Nano Omni on Apple Silicon. Set up once; the agent auto-starts it when needed.
-                </p>
-              </div>
+                  </span>
+                }
+              />
               <div className="flex flex-wrap gap-2">
                 {!runtimeInstalled || setupRunning ? (
                   <ToolbarButton disabled={Boolean(busy) || setupRunning} onClick={() => void runAction('Installing…', 'videoProbeSetup')}>
@@ -371,7 +334,7 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
                       if (!window.confirm('Delete the mlx-vlm runtime and all downloaded model weights? This cannot be undone.')) return;
                       void runAction('Resetting…', 'videoProbeReset');
                     }}
-                    className="rounded-lg border border-danger/50 px-3 py-2 text-sm text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="ui-action-button border-danger/50 text-danger hover:bg-danger/10"
                   >
                     Reset
                   </button>
@@ -444,23 +407,20 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
                 </span>
               </Field>
             </div>
-          </section>
+          </SurfacePanel>
         ) : null}
 
         {/* Log */}
         {currentBackend === 'local' ? (
-          <section className="rounded-xl border border-border-subtle bg-surface p-5">
-            <div>
-              <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-primary">Runtime Logs</h2>
-              <p className="mt-1 text-sm text-secondary">Setup and server output. Refreshes automatically.</p>
-            </div>
+          <SurfacePanel className="p-5">
+            <PanelHeader title="Runtime Logs" meta="Setup and server output. Refreshes automatically." titleClassName="text-[26px] leading-tight" />
             <pre
               ref={logRef}
               className="mt-5 max-h-96 overflow-auto rounded-md border border-border-subtle bg-base p-4 text-xs leading-5 text-secondary"
             >
               {status?.log || 'No logs yet.'}
             </pre>
-          </section>
+          </SurfacePanel>
         ) : null}
       </AppPageLayout>
     </div>
