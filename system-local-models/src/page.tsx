@@ -2,6 +2,7 @@ import type { ExtensionSurfaceProps, NativeExtensionClient } from '@neon-pilot/e
 import {
   AppPageIntro,
   AppPageLayout,
+  Checkbox,
   DataTable,
   DataTableBody,
   DataTableCell,
@@ -1030,8 +1031,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                     <div className="space-y-2 sm:col-span-2 lg:col-span-4">
                       <div className="flex flex-col gap-3 rounded-md border border-border-subtle bg-elevated p-3 sm:flex-row sm:items-center sm:justify-between">
                         <label className="flex items-start gap-3 text-sm text-secondary">
-                          <input
-                            type="checkbox"
+                          <Checkbox
                             checked={mtpEnabled}
                             disabled={activeRuntime !== 'gguf'}
                             onChange={(event) => markBooleanDirty(setMtpEnabled, event.target.checked)}
@@ -1117,8 +1117,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                           />
                         </Field>
                         <label className="flex items-center gap-2 text-sm text-secondary">
-                          <input
-                            type="checkbox"
+                          <Checkbox
                             checked={flashAttention}
                             disabled={activeRuntime !== 'gguf'}
                             onChange={(event) => markBooleanDirty(setFlashAttention, event.target.checked)}
