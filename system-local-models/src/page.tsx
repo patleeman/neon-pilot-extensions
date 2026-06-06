@@ -3,6 +3,8 @@ import {
   AppPageIntro,
   AppPageLayout,
   Checkbox,
+  DashboardGrid,
+  DashboardGridCell,
   DataTable,
   DataTableBody,
   DataTableCell,
@@ -11,6 +13,7 @@ import {
   DataTableHeaderCell,
   DataTableRow,
   Field,
+  MetricTile,
   Notice,
   Pill,
   ProgressBar,
@@ -882,24 +885,20 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                   </div>
 
                   {selectedModel ? (
-                    <div className="mt-5 grid gap-2 text-xs sm:grid-cols-4">
-                      <div className="rounded-md border border-border-subtle bg-elevated p-2">
-                        <div className="text-dim">Selected</div>
-                        <div className="mt-1 truncate text-primary">{selectedModel.title}</div>
-                      </div>
-                      <div className="rounded-md border border-border-subtle bg-elevated p-2">
-                        <div className="text-dim">Format</div>
-                        <div className="mt-1 text-primary">{selectedModel.format}</div>
-                      </div>
-                      <div className="rounded-md border border-border-subtle bg-elevated p-2">
-                        <div className="text-dim">Size</div>
-                        <div className="mt-1 text-primary">{selectedModel.size || '—'}</div>
-                      </div>
-                      <div className="rounded-md border border-border-subtle bg-elevated p-2">
-                        <div className="text-dim">Loaded</div>
-                        <div className="mt-1 text-primary">{selectedModel.loaded ? 'Yes' : 'No'}</div>
-                      </div>
-                    </div>
+                    <DashboardGrid columns={4} className="mt-5">
+                      <DashboardGridCell>
+                        <MetricTile label="Selected" value={selectedModel.title} align="left" appearance="plain" valueClassName="truncate" />
+                      </DashboardGridCell>
+                      <DashboardGridCell>
+                        <MetricTile label="Format" value={selectedModel.format} align="left" appearance="plain" />
+                      </DashboardGridCell>
+                      <DashboardGridCell>
+                        <MetricTile label="Size" value={selectedModel.size || '—'} align="left" appearance="plain" />
+                      </DashboardGridCell>
+                      <DashboardGridCell>
+                        <MetricTile label="Loaded" value={selectedModel.loaded ? 'Yes' : 'No'} align="left" appearance="plain" />
+                      </DashboardGridCell>
+                    </DashboardGrid>
                   ) : (
                     <div className="mt-5 text-sm text-secondary">No downloaded model selected.</div>
                   )}
