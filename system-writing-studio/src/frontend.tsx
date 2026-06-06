@@ -11,6 +11,7 @@ import StarterKit from '@tiptap/starter-kit';
 import type { NativeExtensionClient } from '@neon-pilot/extensions';
 import {
   buildApiPath,
+  Button,
   ErrorState,
   ExtensionChatRail,
   IconButton,
@@ -1190,12 +1191,12 @@ export function WritingStudioSidebar({ pa }: { pa: NativeExtensionClient }) {
     actionMode === 'delete-document' || actionMode === 'delete-folder' ? (
       <div className="writing-studio-doc-form writing-studio-doc-inline-action is-danger">
         <span>Delete {actionMode === 'delete-document' ? selectedDocument?.fileName : `${selectedFolder}/`}?</span>
-        <button className="is-danger" type="button" onClick={() => void runDocumentAction()}>
+        <Button className="is-danger" variant="action" tone="danger" type="button" onClick={() => void runDocumentAction()}>
           Delete
-        </button>
-        <button type="button" onClick={() => beginDocumentAction('idle')}>
+        </Button>
+        <Button variant="ghost" type="button" onClick={() => beginDocumentAction('idle')}>
           Cancel
-        </button>
+        </Button>
       </div>
     ) : actionMode !== 'idle' ? (
       <div className="writing-studio-doc-form writing-studio-doc-inline-action">
@@ -1210,12 +1211,12 @@ export function WritingStudioSidebar({ pa }: { pa: NativeExtensionClient }) {
           placeholder={actionMode.includes('folder') ? 'Folder name' : 'filename.md'}
           autoFocus
         />
-        <button type="button" onClick={() => void runDocumentAction()}>
+        <Button variant="action" type="button" onClick={() => void runDocumentAction()}>
           {actionLabel}
-        </button>
-        <button type="button" onClick={() => beginDocumentAction('idle')}>
+        </Button>
+        <Button variant="ghost" type="button" onClick={() => beginDocumentAction('idle')}>
           Cancel
-        </button>
+        </Button>
       </div>
     ) : null;
 
