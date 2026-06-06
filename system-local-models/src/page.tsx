@@ -2,6 +2,7 @@ import type { ExtensionSurfaceProps, NativeExtensionClient } from '@neon-pilot/e
 import {
   AppPageIntro,
   AppPageLayout,
+  DataTableEmptyRow,
   Field,
   Notice,
   Pill,
@@ -951,11 +952,9 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                           </tr>
                         ))}
                         {!downloadedModels.length ? (
-                          <tr>
-                            <td colSpan={5} className="px-3 py-10 text-center text-secondary">
-                              No downloaded models yet. Go to Library to download one.
-                            </td>
-                          </tr>
+                          <DataTableEmptyRow colSpan={5} cellClassName="py-10">
+                            No downloaded models yet. Go to Library to download one.
+                          </DataTableEmptyRow>
                         ) : null}
                       </tbody>
                     </table>
@@ -1269,11 +1268,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                           </tr>
                         ))}
                         {!searchResults.length ? (
-                          <tr>
-                            <td colSpan={6} className="px-3 py-12 text-center text-secondary">
-                              Search Hugging Face to find MLX and GGUF models.
-                            </td>
-                          </tr>
+                          <DataTableEmptyRow colSpan={6}>Search Hugging Face to find MLX and GGUF models.</DataTableEmptyRow>
                         ) : null}
                       </tbody>
                     </table>
@@ -1344,11 +1339,9 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                           </tr>
                         ))}
                         {!downloadedModels.length ? (
-                          <tr>
-                            <td colSpan={5} className="px-3 py-10 text-center text-secondary">
-                              No downloaded models yet.
-                            </td>
-                          </tr>
+                          <DataTableEmptyRow colSpan={5} cellClassName="py-10">
+                            No downloaded models yet.
+                          </DataTableEmptyRow>
                         ) : null}
                       </tbody>
                     </table>
