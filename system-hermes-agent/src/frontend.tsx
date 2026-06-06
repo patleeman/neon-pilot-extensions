@@ -1186,7 +1186,7 @@ export function HermesAgentPage({ pa, context }: ExtensionSurfaceProps) {
         <header className="mx-auto w-full max-w-[68rem] shrink-0 px-8 pb-2 pt-9 sm:px-10">
           <div className="min-w-0">
             <h1 className="truncate text-[40px] font-semibold leading-tight text-primary">
-              {activeSession ? sessionTitle(activeSession) : 'New Conversation'}
+              {activeSession ? sessionTitle(activeSession) : 'Hermes Agent'}
             </h1>
             {activeSession ? (
               <p className="mt-1 truncate text-[12px] text-dim">
