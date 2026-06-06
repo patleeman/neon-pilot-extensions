@@ -1,3 +1,4 @@
+import { Checkbox, Select, TextInput } from '@neon-pilot/extensions/ui';
 import { useCallback, useEffect, useState } from 'react';
 
 type ExtensionClient = {
@@ -594,24 +595,24 @@ export function Ds4RuntimeSettings({ pa }: { pa: ExtensionClient }) {
         </div>
         <label className="mt-3 block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">Active runtime slot</span>
-          <select
+          <Select
             value={advancedDraft.activeModelSlotId}
             onChange={(event) => setAdvancedDraft((draft) => ({ ...draft, activeModelSlotId: event.currentTarget.value }))}
-            className="mt-2 w-full rounded-md border border-border-subtle bg-base px-2.5 py-2 text-[12px] text-primary outline-none focus:border-accent/60"
+            className="mt-2 bg-base text-[12px]"
           >
             {advancedDraft.modelSlots.map((slot) => (
               <option key={slot.id} value={slot.id}>
                 {slot.name || slot.id}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
         <div className="mt-3 space-y-3">
           {advancedDraft.modelSlots.map((slot, index) => (
             <div key={`${slot.id}-${index}`} className="rounded-md border border-border-subtle bg-base/30 p-3">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <label className="flex items-center gap-2 text-[12px] text-primary">
-                  <input type="checkbox" checked={slot.enabled} onChange={(event) => updateModelSlot(index, { enabled: event.currentTarget.checked })} className="h-4 w-4 accent-accent" />
+                  <Checkbox checked={slot.enabled} onChange={(event) => updateModelSlot(index, { enabled: event.currentTarget.checked })} />
                   Expose in picker
                 </label>
                 <div className="flex items-center gap-2">
@@ -782,14 +783,14 @@ function NumberSetting({
   return (
     <label className="block rounded-md border border-border-subtle bg-base/30 p-3">
       <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">{label}</span>
-      <input
+      <TextInput
         type="number"
         min={min}
         max={max}
         step={step}
         value={value}
         onChange={(event) => onChange(event.currentTarget.value)}
-        className="mt-2 w-full rounded-md border border-border-subtle bg-base px-2.5 py-2 font-mono text-[12px] text-primary outline-none focus:border-accent/60"
+        className="mt-2 bg-base font-mono text-[12px]"
       />
     </label>
   );
@@ -799,11 +800,11 @@ function TextSetting({ label, value, onChange }: { label: string; value: string;
   return (
     <label className="block">
       <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-dim">{label}</span>
-      <input
+      <TextInput
         type="text"
         value={value}
         onChange={(event) => onChange(event.currentTarget.value)}
-        className="mt-2 w-full rounded-md border border-border-subtle bg-base px-2.5 py-2 font-mono text-[12px] text-primary outline-none focus:border-accent/60"
+        className="mt-2 bg-base font-mono text-[12px]"
       />
     </label>
   );
@@ -822,7 +823,7 @@ function ToggleSetting({
 }) {
   return (
     <label className="flex cursor-pointer items-start gap-3 rounded-md border border-border-subtle bg-base/30 p-3">
-      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.currentTarget.checked)} className="mt-1 h-4 w-4 accent-accent" />
+      <Checkbox checked={checked} onChange={(event) => onChange(event.currentTarget.checked)} className="mt-1" />
       <span className="min-w-0">
         <span className="block text-[12px] font-medium text-primary">{label}</span>
         <span className="mt-1 block text-[12px] text-dim">{description}</span>
