@@ -7,6 +7,8 @@ import {
   EmptyState,
   ErrorState,
   LoadingState,
+  Select,
+  TextInput,
   cx,
   type ActivityTreeItem,
   type ExtensionChatMessageBlock,
@@ -470,7 +472,7 @@ function ConfigForm({
         <div className="flex items-end gap-3">
           <label className="block min-w-0 flex-1 space-y-2">
             <span className="text-[12px] font-semibold text-secondary">Deployment</span>
-            <select
+            <Select
               value={deploymentId}
               onChange={(event) => {
                 const next = deployments.find((deployment) => deployment.id === event.currentTarget.value);
@@ -481,14 +483,14 @@ function ConfigForm({
                 setSessionKey(next.sessionKey ?? '');
                 setApiKey('');
               }}
-              className="w-full rounded-md border border-border-subtle bg-elevated/60 px-3 py-2.5 text-[13px] text-primary outline-none focus:border-accent focus-visible:ring-1 focus-visible:ring-accent/30"
+              className="bg-elevated/60 py-2.5 text-[13px]"
             >
               {deployments.map((deployment) => (
                 <option key={deployment.id} value={deployment.id}>
                   {deployment.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
           <ToolbarButton onClick={startNewDeployment}>New deployment</ToolbarButton>
         </div>
@@ -497,27 +499,27 @@ function ConfigForm({
       <div className="grid gap-4 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <label className="block space-y-2">
           <span className="text-[12px] font-semibold text-secondary">Name</span>
-          <input
+          <TextInput
             value={name}
             onChange={(event) => setName(event.currentTarget.value)}
             placeholder="Bender"
             name="hermes-deployment-name"
             autoComplete="off"
             spellCheck={false}
-            className="w-full rounded-md border border-border-subtle bg-elevated/60 px-3 py-2.5 text-[13px] text-primary outline-none focus:border-accent focus-visible:ring-1 focus-visible:ring-accent/30"
+            className="bg-elevated/60 py-2.5 text-[13px]"
           />
         </label>
 
         <label className="block space-y-2">
           <span className="text-[12px] font-semibold text-secondary">Deployment ID</span>
-          <input
+          <TextInput
             value={deploymentId}
             onChange={(event) => setDeploymentId(event.currentTarget.value)}
             placeholder="bender"
             name="hermes-deployment-id"
             autoComplete="off"
             spellCheck={false}
-            className="w-full rounded-md border border-border-subtle bg-elevated/60 px-3 py-2.5 text-[13px] text-primary outline-none focus:border-accent focus-visible:ring-1 focus-visible:ring-accent/30"
+            className="bg-elevated/60 py-2.5 text-[13px]"
           />
         </label>
       </div>
@@ -525,7 +527,7 @@ function ConfigForm({
       <div className="grid gap-4 md:grid-cols-2">
         <label className="block space-y-2">
           <span className="text-[12px] font-semibold text-secondary">Base URL</span>
-          <input
+          <TextInput
             value={baseUrl}
             onChange={(event) => setBaseUrl(event.currentTarget.value)}
             placeholder="http://127.0.0.1:8642"
@@ -533,14 +535,14 @@ function ConfigForm({
             name="hermes-url"
             autoComplete="off"
             spellCheck={false}
-            className="w-full rounded-md border border-border-subtle bg-elevated/60 px-3 py-2.5 text-[13px] text-primary outline-none focus:border-accent focus-visible:ring-1 focus-visible:ring-accent/30"
+            className="bg-elevated/60 py-2.5 text-[13px]"
           />
           <span className="block text-[12px] leading-5 text-dim">Local or tailnet URL for the Hermes API server.</span>
         </label>
 
         <label className="block space-y-2">
           <span className="text-[12px] font-semibold text-secondary">API key</span>
-          <input
+          <TextInput
             value={apiKey}
             onChange={(event) => setApiKey(event.currentTarget.value)}
             placeholder={initial?.hasApiKey ? 'Saved; enter a new key to replace' : 'API_SERVER_KEY'}
@@ -548,7 +550,7 @@ function ConfigForm({
             name="hermes-api-key"
             autoComplete="off"
             spellCheck={false}
-            className="w-full rounded-md border border-border-subtle bg-elevated/60 px-3 py-2.5 text-[13px] text-primary outline-none focus:border-accent focus-visible:ring-1 focus-visible:ring-accent/30"
+            className="bg-elevated/60 py-2.5 text-[13px]"
           />
           <span className="block text-[12px] leading-5 text-dim">Raw API_SERVER_KEY value from Hermes. Do not include Bearer.</span>
         </label>
@@ -558,14 +560,14 @@ function ConfigForm({
         <summary className="cursor-pointer text-[12px] font-semibold text-secondary">Advanced</summary>
         <label className="block space-y-2">
           <span className="text-[12px] font-semibold text-secondary">Memory Session Key</span>
-          <input
+          <TextInput
             value={sessionKey}
             onChange={(event) => setSessionKey(event.currentTarget.value)}
             placeholder="agent:main:neon-pilot:dm:local"
             name="hermes-memory-session-key"
             autoComplete="off"
             spellCheck={false}
-            className="w-full rounded-md border border-border-subtle bg-elevated/60 px-3 py-2.5 text-[13px] text-primary outline-none focus:border-accent focus-visible:ring-1 focus-visible:ring-accent/30"
+            className="bg-elevated/60 py-2.5 text-[13px]"
           />
           <span className="block text-[12px] leading-5 text-dim">
             Optional. Hermes uses this as a stable long-term memory scope across sessions.
