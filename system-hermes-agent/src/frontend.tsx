@@ -4,10 +4,13 @@ import {
   ActivityTreeView,
   ChatRailComposer,
   ChatView,
+  Disclosure,
   EmptyState,
   ErrorState,
   LoadingState,
+  Notice,
   Select,
+  SurfacePanel,
   TextInput,
   cx,
   type ActivityTreeItem,
@@ -556,8 +559,7 @@ function ConfigForm({
         </label>
       </div>
 
-      <details className="space-y-3">
-        <summary className="cursor-pointer text-[12px] font-semibold text-secondary">Advanced</summary>
+      <Disclosure summary={<span className="text-[12px] font-semibold text-primary">Advanced</span>}>
         <label className="block space-y-2">
           <span className="text-[12px] font-semibold text-secondary">Memory Session Key</span>
           <TextInput
@@ -573,7 +575,7 @@ function ConfigForm({
             Optional. Hermes uses this as a stable long-term memory scope across sessions.
           </span>
         </label>
-      </details>
+      </Disclosure>
 
       <div className="flex flex-wrap items-center gap-3 pt-1">
         <ToolbarButton onClick={() => void save()} disabled={saving}>
@@ -674,10 +676,10 @@ function HermesSetupSection({
           </p>
         </div>
 
-        <div className="rounded-md border border-border-subtle bg-surface p-5 shadow-sm">
+        <SurfacePanel className="p-5">
           <ConfigForm pa={pa} initial={config} deployments={deployments} onSaved={onSaved} />
           {connected ? <p className="mt-4 text-[12px] text-success">Connected to Hermes.</p> : null}
-        </div>
+        </SurfacePanel>
       </div>
 
       <aside className="space-y-5 border-t border-border-subtle pt-5 lg:border-t-0 lg:pt-0">
@@ -1189,11 +1191,7 @@ export function HermesAgentPage({ pa, context }: ExtensionSurfaceProps) {
     return (
       <div className="flex h-full min-h-0 flex-col overflow-hidden bg-base">
         {error ? <ErrorState message={error} /> : null}
-        {sessionsError ? (
-          <div className="mx-auto mt-4 w-full max-w-[68rem] rounded-md border border-border-subtle bg-elevated/35 px-3 py-2 text-[13px] text-secondary">
-            {sessionsError}
-          </div>
-        ) : null}
+        {sessionsError ? <Notice className="mx-auto mt-4 w-full max-w-[68rem]">{sessionsError}</Notice> : null}
         <header className="mx-auto w-full max-w-[68rem] shrink-0 px-8 pb-2 pt-9 sm:px-10">
           <div className="min-w-0">
             <h1 className="truncate text-[40px] font-semibold leading-tight text-primary">
@@ -1265,9 +1263,7 @@ export function HermesAgentPage({ pa, context }: ExtensionSurfaceProps) {
         </header>
 
         {error ? <ErrorState message={error} /> : null}
-        {sessionsError ? (
-          <div className="rounded-md border border-border-subtle bg-elevated/35 px-3 py-2 text-[13px] text-secondary">{sessionsError}</div>
-        ) : null}
+        {sessionsError ? <Notice>{sessionsError}</Notice> : null}
         {loading ? <LoadingState label="Loading Hermes…" className="h-20 justify-center" /> : null}
 
         <HermesSetupSection pa={pa} config={config} deployments={deployments} connected={connected} onSaved={() => void loadShell()} />
