@@ -3,7 +3,10 @@ import {
   AppPageIntro,
   AppPageLayout,
   ChoiceRow,
+  DashboardGrid,
+  DashboardGridCell,
   Field,
+  MetricTile,
   Notice,
   PanelHeader,
   Pill,
@@ -348,30 +351,35 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
               </div>
             </div>
 
-            <div className="mt-5 grid gap-2 text-xs sm:grid-cols-3">
-              <div className="rounded-md border border-border-subtle bg-elevated p-2">
-                <div className="text-dim">Runtime</div>
-                <div className="mt-1">
-                  {runtimeInstalled ? <Pill tone="success">Installed</Pill> : <Pill tone="warning">Not installed</Pill>}
-                </div>
-              </div>
-              <div className="rounded-md border border-border-subtle bg-elevated p-2">
-                <div className="text-dim">Server</div>
-                <div className="mt-1">
-                  {serverReachable ? (
-                    <Pill tone="success">Running</Pill>
-                  ) : serverRunning || serverListening ? (
-                    <Pill tone="warning">Loading model…</Pill>
-                  ) : (
-                    <Pill>Stopped</Pill>
-                  )}
-                </div>
-              </div>
-              <div className="rounded-md border border-border-subtle bg-elevated p-2">
-                <div className="text-dim">Endpoint</div>
-                <div className="mt-1 truncate font-mono text-primary">{status?.baseUrl ?? '…'}/v1</div>
-              </div>
-            </div>
+            <DashboardGrid columns={3} className="mt-5">
+              <DashboardGridCell>
+                <MetricTile
+                  label="Runtime"
+                  value={runtimeInstalled ? <Pill tone="success">Installed</Pill> : <Pill tone="warning">Not installed</Pill>}
+                  align="left"
+                  appearance="plain"
+                />
+              </DashboardGridCell>
+              <DashboardGridCell>
+                <MetricTile
+                  label="Server"
+                  value={
+                    serverReachable ? (
+                      <Pill tone="success">Running</Pill>
+                    ) : serverRunning || serverListening ? (
+                      <Pill tone="warning">Loading model…</Pill>
+                    ) : (
+                      <Pill>Stopped</Pill>
+                    )
+                  }
+                  align="left"
+                  appearance="plain"
+                />
+              </DashboardGridCell>
+              <DashboardGridCell>
+                <MetricTile label="Endpoint" value={`${status?.baseUrl ?? '…'}/v1`} align="left" appearance="plain" valueClassName="font-mono" />
+              </DashboardGridCell>
+            </DashboardGrid>
 
             <div className="mt-4 space-y-3">
               <Field label="Model">
