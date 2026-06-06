@@ -13,6 +13,7 @@ import {
   buildApiPath,
   ErrorState,
   ExtensionChatRail,
+  IconButton,
   LoadingState,
   SearchInput,
   Textarea,
@@ -1223,7 +1224,8 @@ export function WritingStudioSidebar({ pa }: { pa: NativeExtensionClient }) {
       <div className="writing-studio-sidebar-header">
         <span className="writing-studio-sidebar-title">Documents</span>
         <div className="writing-studio-sidebar-actions writing-studio-doc-import">
-          <button
+          <IconButton
+            compact
             className="writing-studio-icon-button"
             type="button"
             aria-label="Open selected document"
@@ -1232,14 +1234,15 @@ export function WritingStudioSidebar({ pa }: { pa: NativeExtensionClient }) {
             onClick={openSelectedDocument}
           >
             <WritingIcon name="open" />
-          </button>
-          <button className="writing-studio-icon-button" type="button" aria-label="New document" data-tooltip="New document" onClick={() => beginDocumentAction('new-document')}>
+          </IconButton>
+          <IconButton compact className="writing-studio-icon-button" type="button" aria-label="New document" data-tooltip="New document" onClick={() => beginDocumentAction('new-document')}>
             <WritingIcon name="new" />
-          </button>
-          <button className="writing-studio-icon-button" type="button" aria-label="New folder" data-tooltip="New folder" onClick={() => beginDocumentAction('new-folder')}>
+          </IconButton>
+          <IconButton compact className="writing-studio-icon-button" type="button" aria-label="New folder" data-tooltip="New folder" onClick={() => beginDocumentAction('new-folder')}>
             <WritingIcon name="folderNew" />
-          </button>
-          <button
+          </IconButton>
+          <IconButton
+            compact
             className="writing-studio-icon-button"
             type="button"
             aria-label="Rename selected item"
@@ -1248,8 +1251,9 @@ export function WritingStudioSidebar({ pa }: { pa: NativeExtensionClient }) {
             onClick={() => beginDocumentAction(selectedDocument ? 'rename-document' : 'rename-folder')}
           >
             <WritingIcon name="rename" />
-          </button>
-          <button
+          </IconButton>
+          <IconButton
+            compact
             className="writing-studio-icon-button"
             type="button"
             aria-label="Delete selected item"
@@ -1258,7 +1262,7 @@ export function WritingStudioSidebar({ pa }: { pa: NativeExtensionClient }) {
             onClick={() => beginDocumentAction(selectedDocument ? 'delete-document' : 'delete-folder')}
           >
             <WritingIcon name="delete" />
-          </button>
+          </IconButton>
           <label className="writing-studio-icon-button" data-tooltip="Import markdown" aria-label="Import markdown">
             <WritingIcon name="import" />
             <input
@@ -2293,7 +2297,8 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
             </div>
           )}
           <div className="writing-studio-rail-tools">
-            <button
+            <IconButton
+              compact
               className="writing-studio-icon-button"
               type="button"
               aria-label="Start new chat"
@@ -2302,8 +2307,9 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
               onClick={() => void clearChat()}
             >
               <WritingIcon name="clearChat" />
-            </button>
-            <button
+            </IconButton>
+            <IconButton
+              compact
               className="writing-studio-icon-button"
               type="button"
               aria-label={railCollapsed ? 'Expand chat' : 'Collapse chat'}
@@ -2311,7 +2317,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
               onClick={() => setRailCollapsed((collapsed) => !collapsed)}
             >
               <WritingIcon name={railCollapsed ? 'expand' : 'collapse'} />
-            </button>
+            </IconButton>
           </div>
         </div>
         <section className="writing-studio-chat-shell">
@@ -2342,14 +2348,15 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
           <div className="writing-studio-modal" onMouseDown={(event) => event.stopPropagation()}>
             <div className="writing-studio-modal-header">
               <h2>Writing Studio settings</h2>
-              <button
+              <IconButton
+                compact
                 className="writing-studio-icon-button"
                 type="button"
                 aria-label="Close settings"
                 onClick={() => setSettingsOpen(false)}
               >
                 ×
-              </button>
+              </IconButton>
             </div>
             <div className="writing-studio-modal-body">
               <div className="writing-studio-field">
