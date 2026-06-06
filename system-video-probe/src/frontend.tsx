@@ -1,7 +1,6 @@
 import type { ExtensionSurfaceProps } from '@neon-pilot/extensions';
 import {
   AppPageIntro,
-  AppPageLayout,
   ChoiceRow,
   DashboardGrid,
   DashboardGridCell,
@@ -11,6 +10,8 @@ import {
   PanelHeader,
   Pill,
   ProgressBar,
+  RuntimeHeaderControls,
+  RuntimePage,
   RuntimeSection,
   RuntimeStrip,
   SurfacePanel,
@@ -151,11 +152,7 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
           : runtimeInstalled
             ? 'Ready'
             : 'Not set up');
-  const statusDotClass = serverReachable
-    ? 'bg-success'
-    : serverRunning || serverListening || setupRunning
-      ? 'bg-warning animate-pulse'
-      : 'bg-dim';
+  const statusTone = serverReachable ? 'running' : serverRunning || serverListening || setupRunning ? 'warning' : 'muted';
 
   async function toggleServer() {
     if (serverReachable || serverRunning) {
@@ -166,50 +163,20 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
   }
 
   return (
-    <div className="h-full overflow-y-auto">
-      <AppPageLayout shellClassName="max-w-[72rem]" contentClassName="space-y-10">
+    <RuntimePage>
         <AppPageIntro
           title="Video Probe"
           summary="Analyze video files with the probe_video agent tool. Uses Nemotron Nano Omni via mlx-vlm on Apple Silicon, or any configured OpenRouter model."
           actions={
-            <div className="flex flex-wrap items-center gap-3">
-              {currentBackend === 'local' && runtimeInstalled ? (
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={serverEnabled}
-                  aria-label="Enable local server"
-                  disabled={Boolean(busy) || setupRunning}
-                  onClick={() => void toggleServer()}
-                  className="group inline-flex h-8 shrink-0 items-center gap-2 rounded-md px-1.5 text-[12px] font-medium text-secondary transition-colors hover:bg-surface/45 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <span
-                    aria-hidden="true"
-                    className={cx(
-                      'relative inline-flex h-[18px] w-[32px] shrink-0 rounded-full border p-[1px] transition-all',
-                      serverEnabled
-                        ? 'border-accent/55 bg-accent/75 shadow-sm'
-                        : 'border-border-default bg-surface/40 group-hover:bg-surface/60',
-                    )}
-                  >
-                    <span
-                      className={cx(
-                        'h-[14px] w-[14px] rounded-full bg-white shadow-sm transition-transform',
-                        serverEnabled ? 'translate-x-[14px]' : 'translate-x-0',
-                      )}
-                    />
-                  </span>
-                  <span>Server</span>
-                </button>
-              ) : null}
-              <div className="inline-flex items-center gap-2 text-sm text-secondary">
-                <span className={cx('h-2 w-2 rounded-full', statusDotClass)} />
-                <span className="font-medium text-primary">{statusLabel}</span>
-              </div>
-              <ToolbarButton onClick={() => void fetchStatus()} title="Refresh" aria-label="Refresh">
-                ↻
-              </ToolbarButton>
-            </div>
+            <RuntimeHeaderControls
+              switchLabel={currentBackend === 'local' && runtimeInstalled ? 'Server' : undefined}
+              switchChecked={currentBackend === 'local' && runtimeInstalled ? serverEnabled : undefined}
+              switchDisabled={Boolean(busy) || setupRunning}
+              onSwitchChange={currentBackend === 'local' && runtimeInstalled ? () => void toggleServer() : undefined}
+              status={statusLabel}
+              tone={statusTone}
+              onRefresh={() => void fetchStatus()}
+            />
           }
         />
 
@@ -432,7 +399,6 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
             </TerminalBlock>
           </RuntimeSection>
         ) : null}
-      </AppPageLayout>
-    </div>
+    </RuntimePage>
   );
 }

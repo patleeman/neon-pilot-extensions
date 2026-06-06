@@ -1,7 +1,6 @@
 import type { ExtensionSurfaceProps, NativeExtensionClient } from '@neon-pilot/extensions';
 import {
   AppPageIntro,
-  AppPageLayout,
   ButtonLink,
   Checkbox,
   CodeBlock,
@@ -20,6 +19,8 @@ import {
   Notice,
   Pill,
   ProgressBar,
+  RuntimeHeaderControls,
+  RuntimePage,
   RuntimeSection,
   RuntimeStrip,
   Select,
@@ -455,6 +456,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
           : setupRunning
             ? status?.mlx?.setup?.message || 'Downloading'
             : 'Ready');
+  const runtimeStatusTone = !serverEnabled ? 'muted' : running ? 'running' : loading || setupRunning ? 'warning' : 'ready';
   useEffect(() => {
     if (!status || !selectedModel) return;
     const contextInitKey = `${activeRuntime}:${selectedModel.id}`;
@@ -777,52 +779,20 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
   );
 
   return (
-    <div className="h-full overflow-y-auto">
-      <AppPageLayout shellClassName="max-w-[72rem]" contentClassName="space-y-10">
+    <RuntimePage>
         <AppPageIntro
           title="Local Models"
           summary="Manage downloaded local models separately from the server that runs them. Acquisition over here; serving over there. Sanity restored."
           actions={
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                role="switch"
-                aria-checked={serverEnabled}
-                aria-label="Enable local model server"
-                onClick={() => void toggleServerEnabled(!serverEnabled)}
-                className="group inline-flex h-8 shrink-0 items-center gap-2 rounded-md px-1.5 text-[12px] font-medium text-secondary transition-colors hover:bg-surface/45 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/20"
-              >
-                <span
-                  aria-hidden="true"
-                  className={cx(
-                    'relative inline-flex h-[18px] w-[32px] shrink-0 rounded-full border p-[1px] transition-all',
-                    serverEnabled
-                      ? 'border-accent/55 bg-accent/75 shadow-sm'
-                      : 'border-border-default bg-surface/40 group-hover:bg-surface/60',
-                  )}
-                >
-                  <span
-                    className={cx(
-                      'h-[14px] w-[14px] rounded-full bg-white shadow-sm transition-transform',
-                      serverEnabled ? 'translate-x-[14px]' : 'translate-x-0',
-                    )}
-                  />
-                </span>
-                <span>Server</span>
-              </button>
-              <div className="inline-flex items-center gap-2 text-sm text-secondary">
-                <span
-                  className={cx(
-                    'h-2 w-2 rounded-full',
-                    !serverEnabled ? 'bg-dim' : running ? 'bg-success' : setupRunning ? 'bg-warning' : 'bg-dim',
-                  )}
-                />
-                <span className="font-medium text-primary">{runtimeStatus}</span>
-              </div>
-              <ToolbarButton type="button" onClick={() => void refresh()} aria-label="Refresh local models" title="Refresh local models">
-                ↻
-              </ToolbarButton>
-            </div>
+            <RuntimeHeaderControls
+              switchLabel="Server"
+              switchChecked={serverEnabled}
+              onSwitchChange={(checked) => void toggleServerEnabled(checked)}
+              status={runtimeStatus}
+              tone={runtimeStatusTone}
+              onRefresh={() => void refresh()}
+              refreshLabel="Refresh local models"
+            />
           }
         />
 
@@ -1363,8 +1333,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
             </>
           )}
         </div>
-      </AppPageLayout>
-    </div>
+    </RuntimePage>
   );
 }
 
