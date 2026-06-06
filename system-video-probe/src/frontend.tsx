@@ -8,7 +8,10 @@ import {
   PanelHeader,
   Pill,
   ProgressBar,
+  RuntimeSection,
+  RuntimeStrip,
   SurfacePanel,
+  TerminalBlock,
   TextInput,
   ToolbarButton,
   cx,
@@ -210,30 +213,33 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
         {error ? <Notice tone="danger">{error}</Notice> : null}
 
         {setupRunning ? (
-          <SurfacePanel muted className="px-3 py-3">
-            <div className="flex items-center justify-between gap-3 text-sm">
-              <div className="min-w-0 flex-1 text-secondary">
-                <span className="font-medium text-primary">Installing mlx-vlm and downloading model…</span>
-                <div className="mt-1 text-xs text-dim">
-                  ~18 GB download. Check the log below for progress.
-                  {!status?.settings.hfToken ? (
-                    <span>
-                      {' '}
-                      Add a{' '}
-                      <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noreferrer" className="text-accent underline">
-                        HF token
-                      </a>{' '}
-                      below to skip rate limits and speed things up.
-                    </span>
-                  ) : null}
-                </div>
-              </div>
+          <RuntimeStrip
+            status="Installing mlx-vlm and downloading model…"
+            tone="running"
+            metadata={['~18 GB download']}
+            message={
+              <>
+                Check the log below for progress.
+                {!status?.settings.hfToken ? (
+                  <span>
+                    {' '}
+                    Add a{' '}
+                    <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noreferrer" className="text-accent underline">
+                      HF token
+                    </a>{' '}
+                    below to skip rate limits and speed things up.
+                  </span>
+                ) : null}
+              </>
+            }
+          >
+            <div className="flex flex-wrap items-center justify-end gap-3">
               <ToolbarButton disabled={Boolean(busy)} onClick={() => void runAction('Cancelling…', 'videoProbeCancel')}>
                 Cancel
               </ToolbarButton>
             </div>
             <ProgressBar value={33} minPercent={33} className="mt-3" barClassName="animate-pulse" label="Setup progress" />
-          </SurfacePanel>
+          </RuntimeStrip>
         ) : null}
 
         {/* Backend settings */}
@@ -412,15 +418,11 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
 
         {/* Log */}
         {currentBackend === 'local' ? (
-          <SurfacePanel className="p-5">
-            <PanelHeader title="Runtime Logs" meta="Setup and server output. Refreshes automatically." titleClassName="text-[26px] leading-tight" />
-            <pre
-              ref={logRef}
-              className="mt-5 max-h-96 overflow-auto rounded-md border border-border-subtle bg-base p-4 text-xs leading-5 text-secondary"
-            >
+          <RuntimeSection title="Runtime Logs" description="Setup and server output. Refreshes automatically.">
+            <TerminalBlock ref={logRef} className="max-h-96 bg-base leading-5">
               {status?.log || 'No logs yet.'}
-            </pre>
-          </SurfacePanel>
+            </TerminalBlock>
+          </RuntimeSection>
         ) : null}
       </AppPageLayout>
     </div>

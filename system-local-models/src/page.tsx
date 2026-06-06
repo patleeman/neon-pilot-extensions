@@ -7,8 +7,11 @@ import {
   Notice,
   Pill,
   ProgressBar,
+  RuntimeSection,
+  RuntimeStrip,
   Select,
   SurfacePanel,
+  TerminalBlock,
   TextInput,
   ToolbarButton,
   cx,
@@ -811,13 +814,18 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
         />
 
         {downloadMessage ? (
-          <SurfacePanel muted className="px-3 py-3">
-            <div className="flex items-center justify-between gap-3 text-sm">
-              <div className="min-w-0 text-secondary">
-                <span className="font-medium text-primary">{downloadMessage}</span>
+          <RuntimeStrip
+            status={
+              <>
+                {downloadMessage}
                 {setupProgress ? <span className="ml-2 text-dim">{setupProgress}%</span> : null}
-                {downloadSubtext ? <div className="mt-1 text-xs text-dim">{downloadSubtext}</div> : null}
-              </div>
+              </>
+            }
+            tone={setupRunning ? 'running' : 'ready'}
+            metadata={['Local runtime']}
+            message={downloadSubtext}
+          >
+            <div className="flex flex-wrap items-center justify-end gap-3">
               <ToolbarButton disabled={Boolean(busy === 'Cancelling…')} onClick={() => void cancelDownload()}>
                 Stop Download
               </ToolbarButton>
@@ -827,7 +835,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
             ) : (
               <ProgressBar value={50} minPercent={50} className="mt-3" barClassName="animate-pulse" label="Download progress" />
             )}
-          </SurfacePanel>
+          </RuntimeStrip>
         ) : null}
 
         {error ? <Notice tone="danger">{error}</Notice> : null}
@@ -1171,15 +1179,9 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                   </div>
                 </SurfacePanel>
 
-                <SurfacePanel className="p-5">
-                  <div>
-                    <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-primary">Runtime Logs</h2>
-                    <p className="mt-1 text-sm text-secondary">Live runtime logs refresh automatically.</p>
-                  </div>
-                  <pre className="mt-5 max-h-96 overflow-auto rounded-md border border-border-subtle bg-base p-4 text-xs leading-5 text-secondary">
-                    {runtimeLog}
-                  </pre>
-                </SurfacePanel>
+                <RuntimeSection title="Runtime Logs" description="Live runtime logs refresh automatically.">
+                  <TerminalBlock className="max-h-96 bg-base leading-5">{runtimeLog}</TerminalBlock>
+                </RuntimeSection>
               </main>
             </>
           ) : (
