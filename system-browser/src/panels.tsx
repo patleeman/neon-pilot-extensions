@@ -1,7 +1,6 @@
 import {
   type BrowserTabsState,
   createNewTab,
-  cx,
   getAdjacentTabId,
   getDesktopBridge,
   getTabSessionKey,
@@ -9,6 +8,7 @@ import {
   WorkbenchBrowserTab,
   writeBrowserTabsState,
 } from '@neon-pilot/extensions/workbench-browser';
+import { RailSection, ResourceListItem } from '@neon-pilot/extensions/ui';
 import { useCallback, useEffect, useState } from 'react';
 
 import { BrowserToolBlock } from './BrowserToolBlock.js';
@@ -108,49 +108,32 @@ export function BrowserTabsPanel() {
   const { tabsState, switchTab, addTab, closeTab } = useBrowserTabActions();
 
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden">
-      <div className="shrink-0 px-3 py-2">
-        <p className="ui-section-label">Browser</p>
-      </div>
-      <div className="min-h-0 flex-1 flex flex-col gap-px overflow-y-auto px-1.5 py-1.5">
-        {tabsState.tabs.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            className={cx(
-              'group flex items-center gap-2 rounded-lg px-2.5 py-2 text-left text-[12px] transition-colors',
-              tab.id === tabsState.activeTabId ? 'bg-elevated text-primary' : 'text-secondary hover:bg-elevated/70 hover:text-primary',
-            )}
-            onClick={() => switchTab(tab.id)}
-            title={tab.title}
-          >
-            <span className="min-w-0 flex-1 truncate">{tab.title}</span>
-            <span
-              className="ml-auto flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-[10px] opacity-0 transition-opacity hover:bg-border-subtle hover:opacity-100 group-hover:opacity-100"
-              onClick={(event) => {
-                event.stopPropagation();
-                closeTab(tab.id);
-              }}
-              role="button"
-              aria-label={`Close ${tab.title}`}
-              tabIndex={-1}
-            >
-              ×
-            </span>
-          </button>
-        ))}
-        <button
-          type="button"
-          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[12px] text-secondary transition-colors hover:bg-elevated/70 hover:text-primary"
-          onClick={addTab}
-          title="New tab"
-          aria-label="New tab"
+    <RailSection title="Browser" bodyClassName="flex flex-col gap-px px-1.5 py-1.5">
+      {tabsState.tabs.map((tab) => (
+        <ResourceListItem
+          key={tab.id}
+          label={tab.title}
+          selected={tab.id === tabsState.activeTabId}
+          onClick={() => switchTab(tab.id)}
+          title={tab.title}
+          className="group"
         >
-          <span className="text-[14px] leading-none">+</span>
-          <span className="text-left">New tab</span>
-        </button>
-      </div>
-    </div>
+          <span
+            className="ml-auto flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-full text-[10px] opacity-0 transition-opacity hover:bg-border-subtle hover:opacity-100 group-hover:opacity-100"
+            onClick={(event) => {
+              event.stopPropagation();
+              closeTab(tab.id);
+            }}
+            role="button"
+            aria-label={`Close ${tab.title}`}
+            tabIndex={-1}
+          >
+            ×
+          </span>
+        </ResourceListItem>
+      ))}
+      <ResourceListItem label="New tab" leading="+" onClick={addTab} title="New tab" aria-label="New tab" />
+    </RailSection>
   );
 }
 
