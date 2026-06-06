@@ -17,6 +17,7 @@ import {
   SurfacePanel,
   TerminalBlock,
   TextInput,
+  TextLink,
   ToolbarButton,
   cx,
 } from '@neon-pilot/extensions/ui';
@@ -194,9 +195,9 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
                   <span>
                     {' '}
                     Add a{' '}
-                    <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noreferrer" className="text-accent underline">
+                    <TextLink href="https://huggingface.co/settings/tokens" target="_blank" rel="noreferrer">
                       HF token
-                    </a>{' '}
+                    </TextLink>{' '}
                     below to skip rate limits and speed things up.
                   </span>
                 ) : null}
@@ -272,9 +273,9 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
                 ) : (
                   <>
                     No OpenRouter API key detected. Configure OpenRouter in{' '}
-                    <a href="/settings/providers" className="text-accent underline underline-offset-2">
+                    <TextLink href="/settings/providers">
                       Settings → Providers
-                    </a>
+                    </TextLink>
                     , or set <span className="font-mono text-primary">OPENROUTER_API_KEY</span>. The model must support video input.
                   </>
                 )}
@@ -381,9 +382,9 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
                 </div>
                 <span className="mt-1 block text-xs text-dim">
                   Speeds up downloads significantly. Get one at{' '}
-                  <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noreferrer" className="text-accent underline">
+                  <TextLink href="https://huggingface.co/settings/tokens" target="_blank" rel="noreferrer">
                     huggingface.co/settings/tokens
-                  </a>
+                  </TextLink>
                   . Read-only scope is enough.
                 </span>
               </Field>
