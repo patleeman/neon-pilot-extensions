@@ -19,7 +19,9 @@ import {
   ExtensionChatRail,
   IconButton,
   LoadingState,
+  MenuItem,
   SearchInput,
+  TextButton,
   Textarea,
   TextInput,
   ToolbarButton,
@@ -2143,9 +2145,8 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
         >
           <div className="writing-studio-export-menu">
             {(['markdown', 'html', 'rtf', 'docx'] as const).map((format) => (
-              <button
+              <MenuItem
                 key={format}
-                type="button"
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => {
                   setExportMenuOpen(false);
@@ -2153,7 +2154,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
                 }}
               >
                 {format.toUpperCase()}
-              </button>
+              </MenuItem>
             ))}
           </div>
         </WritingFormatBar>
@@ -2179,15 +2180,15 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
                 onMouseDown={(event) => event.preventDefault()}
                 onMouseUp={(event) => event.stopPropagation()}
               >
-                <button type="button" role="menuitem" onClick={() => sendSelectionToChat('discuss')}>
+                <MenuItem role="menuitem" onClick={() => sendSelectionToChat('discuss')}>
                   Discuss
-                </button>
-                <button type="button" role="menuitem" onClick={reviewSelection}>
+                </MenuItem>
+                <MenuItem role="menuitem" onClick={reviewSelection}>
                   Review
-                </button>
-                <button type="button" role="menuitem" onClick={() => sendSelectionToChat('enhance')}>
+                </MenuItem>
+                <MenuItem role="menuitem" onClick={() => sendSelectionToChat('enhance')}>
                   Improve
-                </button>
+                </MenuItem>
               </div>
             ) : null}
             <EditorContent editor={editor} />
@@ -2219,9 +2220,8 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
                   <div className="writing-studio-comment-top">
                     <span className="writing-studio-comment-kind">{annotation.emoji ?? annotation.kind}</span>
                     <div className="writing-studio-comment-actions">
-                      <button
+                      <TextButton
                         className="writing-studio-comment-discuss"
-                        type="button"
                         onClick={(event) => {
                           event.stopPropagation();
                           selectAnnotation(annotation);
@@ -2229,10 +2229,11 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
                         }}
                       >
                         Discuss
-                      </button>
-                      <button
+                      </TextButton>
+                      <IconButton
+                        compact
+                        size="sm"
                         className="writing-studio-comment-close"
-                        type="button"
                         aria-label="Resolve annotation"
                         title="Resolve annotation"
                         onClick={(event) => {
@@ -2241,16 +2242,15 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
                         }}
                       >
                         ×
-                      </button>
+                      </IconButton>
                     </div>
                   </div>
                   <p>{annotation.body}</p>
                   {annotation.suggestedReplacement?.trim() ? (
                     <div className="writing-studio-suggested-edit">
                       <pre>{annotation.suggestedReplacement}</pre>
-                      <button
+                      <Button
                         className="writing-studio-apply-edit"
-                        type="button"
                         disabled={busy === 'apply-annotation'}
                         onClick={(event) => {
                           event.stopPropagation();
@@ -2259,7 +2259,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
                         }}
                       >
                         Apply
-                      </button>
+                      </Button>
                     </div>
                   ) : null}
                 </article>
