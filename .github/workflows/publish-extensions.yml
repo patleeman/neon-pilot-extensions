@@ -80,6 +80,13 @@ jobs:
         working-directory: neon-pilot
         run: pnpm install --frozen-lockfile
 
+      - name: Build Neon Pilot extension SDK packages
+        working-directory: neon-pilot
+        run: |
+          pnpm --dir packages/core run build
+          pnpm --dir packages/extensions run build
+          pnpm --dir packages/ui run build
+
       - name: Prepare extension release artifacts
         working-directory: neon-pilot-extensions
         run: pnpm run release:prepare -- --tag "${{ steps.release.outputs.tag }}"
