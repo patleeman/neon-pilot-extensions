@@ -303,17 +303,17 @@ export function VideoProbePage({ pa }: ExtensionSurfaceProps) {
                   </ToolbarButton>
                 ) : null}
                 {runtimeInstalled || setupRunning ? (
-                  <button
+                  <ToolbarButton
                     type="button"
                     disabled={Boolean(busy)}
                     onClick={() => {
                       if (!window.confirm('Delete the mlx-vlm runtime and all downloaded model weights? This cannot be undone.')) return;
                       void runAction('Resetting…', 'videoProbeReset');
                     }}
-                    className="ui-action-button border-danger/50 text-danger hover:bg-danger/10"
+                    className="border-danger/50 text-danger hover:bg-danger/10"
                   >
                     Reset
-                  </button>
+                  </ToolbarButton>
                 ) : null}
               </div>
             </div>
