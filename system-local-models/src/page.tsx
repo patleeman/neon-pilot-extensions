@@ -7,6 +7,7 @@ import {
   DashboardGrid,
   DashboardGridCell,
   DataTable,
+  DataTableActionGroup,
   DataTableBody,
   DataTableCell,
   DataTableEmptyRow,
@@ -908,7 +909,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                               )}
                             </DataTableCell>
                             <DataTableCell onClick={(event) => event.stopPropagation()}>
-                              <div className="flex gap-2">
+                              <DataTableActionGroup className="justify-start">
                                 {model.path ? (
                                   <ToolbarButton
                                     onClick={() => void pa.extension.invoke('localModelsGgufReveal', { modelPath: model.path })}
@@ -924,7 +925,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                                 >
                                   Delete
                                 </ToolbarButton>
-                              </div>
+                              </DataTableActionGroup>
                             </DataTableCell>
                           </DataTableRow>
                         ))}
@@ -1224,6 +1225,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                             <DataTableCell className="hidden text-secondary 2xl:table-cell">{model.likes.toLocaleString()}</DataTableCell>
                             <DataTableCell className="hidden text-secondary 2xl:table-cell">{formatDate(model.lastModified)}</DataTableCell>
                             <DataTableCell>
+                              <DataTableActionGroup>
                               <RowActionsMenu
                                 label={`More actions for ${model.id}`}
                                 actions={[
@@ -1239,6 +1241,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                                   },
                                 ]}
                               />
+                              </DataTableActionGroup>
                             </DataTableCell>
                           </DataTableRow>
                         ))}
@@ -1280,6 +1283,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                             <DataTableCell className="text-secondary">{model.size || '—'}</DataTableCell>
                             <DataTableCell className="text-secondary">{formatDate(model.modified)}</DataTableCell>
                             <DataTableCell>
+                              <DataTableActionGroup>
                               <RowActionsMenu
                                 label={`More actions for ${model.title}`}
                                 disabled={Boolean(busy)}
@@ -1308,6 +1312,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                                   },
                                 ]}
                               />
+                              </DataTableActionGroup>
                             </DataTableCell>
                           </DataTableRow>
                         ))}
