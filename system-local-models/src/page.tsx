@@ -2,7 +2,9 @@ import type { ExtensionSurfaceProps, NativeExtensionClient } from '@neon-pilot/e
 import {
   AppPageIntro,
   AppPageLayout,
+  ButtonLink,
   Checkbox,
+  CodeBlock,
   DashboardGrid,
   DashboardGridCell,
   DataTable,
@@ -12,6 +14,7 @@ import {
   DataTableHead,
   DataTableHeaderCell,
   DataTableRow,
+  Disclosure,
   Field,
   MetricTile,
   Notice,
@@ -739,9 +742,9 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
               >
                 Download
               </ToolbarButton>
-              <a href={`https://huggingface.co/${selectedSearch.id}`} target="_blank" rel="noreferrer" className="ui-toolbar-button">
+              <ButtonLink href={`https://huggingface.co/${selectedSearch.id}`} target="_blank" rel="noreferrer">
                 Hugging Face ↗
-              </a>
+              </ButtonLink>
             </div>
             {details ? (
               <>
@@ -759,11 +762,11 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                 ) : null}
               </>
             ) : (
-              <div className="rounded-md border border-border-subtle bg-elevated p-3 text-xs leading-5 text-secondary">
+              <SurfacePanel muted className="p-3 text-xs leading-5 text-secondary">
                 {selectedSearch.format === 'gguf'
                   ? 'Selecting a GGUF model loads its file list automatically.'
                   : 'MLX models can download directly. Use the Hugging Face link for full model details.'}
-              </div>
+              </SurfacePanel>
             )}
           </div>
         ) : (
@@ -1028,7 +1031,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                       <TextInput value={maxTokens} onChange={(event) => markDirty(setMaxTokens, event.target.value)} />
                     </Field>
                     <div className="space-y-2 sm:col-span-2 lg:col-span-4">
-                      <div className="flex flex-col gap-3 rounded-md border border-border-subtle bg-elevated p-3 sm:flex-row sm:items-center sm:justify-between">
+                      <SurfacePanel muted className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between">
                         <label className="flex items-start gap-3 text-sm text-secondary">
                           <Checkbox
                             checked={mtpEnabled}
@@ -1051,12 +1054,9 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                             onChange={(event) => markDirty(setMtpDraftTokens, event.target.value)}
                           />
                         </div>
-                      </div>
+                      </SurfacePanel>
                     </div>
-                    <details className="sm:col-span-2 lg:col-span-4">
-                      <summary className="cursor-pointer rounded-lg bg-surface/45 px-3 py-2 text-sm font-medium text-primary hover:bg-surface/70">
-                        Advanced runtime options
-                      </summary>
+                    <Disclosure className="sm:col-span-2 lg:col-span-4" summary="Advanced runtime options">
                       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                         <Field label="Top K">
                           <TextInput
@@ -1133,12 +1133,12 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                           />
                         </Field>
                       </div>
-                    </details>
+                    </Disclosure>
                     <div className="space-y-2 sm:col-span-2 lg:col-span-4">
-                      <div className="rounded-md border border-border-subtle bg-elevated p-3">
+                      <SurfacePanel muted className="p-3">
                         <div className="mb-3 text-sm font-medium text-primary">Supported backends</div>
                         <div className="grid gap-2 lg:grid-cols-2">
-                          <div className="flex items-start justify-between gap-3 rounded-lg border border-border-subtle/50 p-3">
+                          <SurfacePanel className="flex items-start justify-between gap-3 p-3">
                             <div>
                               <div className="flex items-center gap-2 text-sm font-medium text-primary">
                                 MLX <span>{runtimeBadge(status?.mlx?.runtime)}</span>
@@ -1151,8 +1151,8 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                             <ToolbarButton disabled={Boolean(busy)} onClick={() => void updateMlxRuntime()}>
                               {status?.mlx?.runtime?.installed ? 'Update' : 'Install'}
                             </ToolbarButton>
-                          </div>
-                          <div className="flex items-start justify-between gap-3 rounded-lg border border-border-subtle/50 p-3">
+                          </SurfacePanel>
+                          <SurfacePanel className="flex items-start justify-between gap-3 p-3">
                             <div>
                               <div className="flex items-center gap-2 text-sm font-medium text-primary">
                                 llama.cpp <span>{runtimeBadge(status?.gguf?.runtime)}</span>
@@ -1168,14 +1168,12 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                             >
                               {status?.gguf?.runtime?.installed ? 'Update' : 'Install'}
                             </ToolbarButton>
-                          </div>
+                          </SurfacePanel>
                         </div>
-                      </div>
+                      </SurfacePanel>
                       <div className="space-y-1">
                         <div className="text-sm text-secondary">Endpoint</div>
-                        <div className="rounded-md border border-border-subtle bg-elevated p-2 font-mono text-xs text-primary">
-                          {endpoint}
-                        </div>
+                        <CodeBlock compact>{endpoint}</CodeBlock>
                       </div>
                     </div>
                   </div>
