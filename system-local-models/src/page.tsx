@@ -854,7 +854,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
           {page === 'server' ? (
             <>
               <main className="min-w-0 flex-1 space-y-5">
-                <section className="rounded-xl border border-border-subtle bg-surface p-5">
+                <SurfacePanel className="p-5">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div>
                       <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-primary">Model Settings</h2>
@@ -960,9 +960,9 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                       </tbody>
                     </table>
                   </div>
-                </section>
+                </SurfacePanel>
 
-                <section className="rounded-xl border border-border-subtle bg-surface p-4">
+                <SurfacePanel className="p-4">
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div>
                       <h2 className="text-[24px] font-semibold leading-tight tracking-[-0.02em] text-primary">Serving Settings</h2>
@@ -1170,9 +1170,9 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                       </div>
                     </div>
                   </div>
-                </section>
+                </SurfacePanel>
 
-                <section className="rounded-xl border border-border-subtle bg-surface p-5">
+                <SurfacePanel className="p-5">
                   <div>
                     <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-primary">Runtime Logs</h2>
                     <p className="mt-1 text-sm text-secondary">Live runtime logs refresh automatically.</p>
@@ -1180,13 +1180,13 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                   <pre className="mt-5 max-h-96 overflow-auto rounded-md border border-border-subtle bg-base p-4 text-xs leading-5 text-secondary">
                     {runtimeLog}
                   </pre>
-                </section>
+                </SurfacePanel>
               </main>
             </>
           ) : (
             <>
               <main className="min-w-0 flex-1 space-y-5">
-                <section className="rounded-xl border border-border-subtle bg-surface p-5">
+                <SurfacePanel className="p-5">
                   <div>
                     <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-primary">Model Library</h2>
                     <p className="mt-1 text-sm text-secondary">
@@ -1278,9 +1278,9 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                       </tbody>
                     </table>
                   </div>
-                </section>
+                </SurfacePanel>
 
-                <section className="rounded-xl border border-border-subtle bg-surface p-5">
+                <SurfacePanel className="p-5">
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-primary">Downloaded Models</h2>
@@ -1353,7 +1353,7 @@ export function LocalModelsPage({ pa }: ExtensionSurfaceProps) {
                       </tbody>
                     </table>
                   </div>
-                </section>
+                </SurfacePanel>
               </main>
               {libraryRail}
             </>
