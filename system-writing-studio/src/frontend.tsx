@@ -12,6 +12,9 @@ import type { NativeExtensionClient } from '@neon-pilot/extensions';
 import {
   buildApiPath,
   Button,
+  EditorToolbar,
+  EditorToolbarButton,
+  EditorToolbarGroup,
   ErrorState,
   ExtensionChatRail,
   IconButton,
@@ -332,20 +335,23 @@ function FormatButton({
   onClick: () => void;
 }) {
   return (
-    <button
-      className={`writing-studio-format-button ${active ? 'is-active' : ''}`}
-      type="button"
+    <EditorToolbarButton
+      active={active}
       aria-label={title}
       title={title}
       disabled={disabled}
-      onMouseDown={(event) => {
-        event.preventDefault();
-        onClick();
-      }}
+      onPress={onClick}
     >
       {label}
-    </button>
+    </EditorToolbarButton>
   );
+}
+
+function saveStatusTone(status: SaveStatus): 'saved' | 'saving' | 'unsaved' | 'error' {
+  if (status === 'saving') return 'saving';
+  if (status === 'unsaved') return 'unsaved';
+  if (status === 'error') return 'error';
+  return 'saved';
 }
 
 function WritingFormatBar({
@@ -405,65 +411,51 @@ function WritingFormatBar({
     });
   };
   return (
-    <div className="writing-studio-formatbar" aria-label="Markdown formatting" onMouseDown={(event) => event.preventDefault()}>
-      <div className="writing-studio-format-group writing-studio-format-actions">
-        <button
-          className={`writing-studio-format-save is-${saveStatus}`}
-          type="button"
+    <EditorToolbar className="writing-studio-formatbar" sticky aria-label="Markdown formatting" onMouseDown={(event) => event.preventDefault()}>
+      <EditorToolbarGroup className="writing-studio-format-actions">
+        <EditorToolbarButton
+          icon
+          statusTone={saveStatusTone(saveStatus)}
           aria-label="Save document"
           title={saveTooltip}
           disabled={saveStatus === 'saving'}
-          onMouseDown={(event) => {
-            event.preventDefault();
-            onSave();
-          }}
+          onPress={onSave}
         >
           <WritingIcon name="save" />
-        </button>
-      </div>
-      <div className="writing-studio-format-group writing-studio-format-actions">
-        <button
-          className="writing-studio-format-icon"
-          type="button"
+        </EditorToolbarButton>
+      </EditorToolbarGroup>
+      <EditorToolbarGroup className="writing-studio-format-actions">
+        <EditorToolbarButton
+          icon
           aria-label="Export document"
           title="Export document"
-          onMouseDown={(event) => {
-            event.preventDefault();
-            onExport();
-          }}
+          onPress={onExport}
         >
           <WritingIcon name="export" />
-        </button>
-        <button
-          className={`writing-studio-format-icon ${reviewBusy ? 'is-running' : ''}`}
-          type="button"
+        </EditorToolbarButton>
+        <EditorToolbarButton
+          icon
+          statusTone={reviewBusy ? 'running' : undefined}
           aria-label="Review document"
           title={reviewBusy ? 'Reviewing document' : 'Review document'}
           aria-busy={reviewBusy}
           disabled={reviewBusy}
-          onMouseDown={(event) => {
-            event.preventDefault();
-            onReview();
-          }}
+          onPress={onReview}
         >
           <WritingIcon name="review" />
-        </button>
+        </EditorToolbarButton>
         {reviewStatusText ? <span className={`writing-studio-format-status is-${reviewStatus}`}>{reviewStatusText}</span> : null}
-        <button
-          className="writing-studio-format-icon"
-          type="button"
+        <EditorToolbarButton
+          icon
           aria-label="Writing Studio settings"
           title="Settings"
-          onMouseDown={(event) => {
-            event.preventDefault();
-            onSettings();
-          }}
+          onPress={onSettings}
         >
           <WritingIcon name="settings" />
-        </button>
+        </EditorToolbarButton>
         {exportMenuOpen ? children : null}
-      </div>
-      <div className="writing-studio-format-group">
+      </EditorToolbarGroup>
+      <EditorToolbarGroup>
         <FormatButton
           label="P"
           title="Paragraph"
@@ -492,8 +484,8 @@ function WritingFormatBar({
           active={editor.isActive('heading', { level: 3 })}
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
         />
-      </div>
-      <div className="writing-studio-format-group">
+      </EditorToolbarGroup>
+      <EditorToolbarGroup>
         <FormatButton
           label="B"
           title="Bold"
@@ -523,19 +515,17 @@ function WritingFormatBar({
           onClick={() => editor.chain().focus().toggleCode().run()}
         />
         <FormatButton label="[]" title="Link" disabled={disabled} active={editor.isActive('link') || linkOpen} onClick={openLinkEditor} />
-        <button
-          className="writing-studio-format-icon"
-          type="button"
+        <EditorToolbarButton
+          icon
           aria-label="Insert image"
           title="Insert image"
           disabled={disabled}
-          onMouseDown={(event) => {
-            event.preventDefault();
+          onPress={() => {
             imageInputRef.current?.click();
           }}
         >
           <WritingIcon name="image" />
-        </button>
+        </EditorToolbarButton>
         <input
           ref={imageInputRef}
           className="writing-studio-hidden-file"
@@ -547,8 +537,8 @@ function WritingFormatBar({
             event.currentTarget.value = '';
           }}
         />
-      </div>
-      <div className="writing-studio-format-group">
+      </EditorToolbarGroup>
+      <EditorToolbarGroup>
         <FormatButton
           label="•"
           title="Bulleted list"
@@ -577,15 +567,15 @@ function WritingFormatBar({
           active={editor.isActive('codeBlock')}
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         />
-      </div>
-      <div className="writing-studio-format-group">
+      </EditorToolbarGroup>
+      <EditorToolbarGroup>
         <FormatButton
           label="HR"
           title="Horizontal rule"
           disabled={disabled}
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
         />
-      </div>
+      </EditorToolbarGroup>
       {linkOpen ? (
         <form
           className="writing-studio-link-popover"
@@ -601,13 +591,13 @@ function WritingFormatBar({
             aria-label="Link URL"
             autoFocus
           />
-          <button type="submit">Apply</button>
-          <button type="button" onClick={() => editor.chain().focus().unsetLink().run()}>
+          <Button type="submit">Apply</Button>
+          <Button type="button" onClick={() => editor.chain().focus().unsetLink().run()}>
             Clear
-          </button>
+          </Button>
         </form>
       ) : null}
-    </div>
+    </EditorToolbar>
   );
 }
 
