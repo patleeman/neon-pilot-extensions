@@ -1,5 +1,5 @@
 import type { ExtensionSurfaceProps, NativeExtensionClient } from '@neon-pilot/extensions';
-import { cx } from '@neon-pilot/extensions/ui';
+import { IconButton, cx } from '@neon-pilot/extensions/ui';
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 const LocalModelsPageImpl = lazy(() => import('./page').then((module) => ({ default: module.LocalModelsPage })));
@@ -133,10 +133,11 @@ export function LocalModelsToggle({ pa }: { pa: NativeExtensionClient }) {
   }
 
   return (
-    <button
+    <IconButton
+      compact
       type="button"
       className={cx(
-        'ui-toolbar-button ui-desktop-top-bar__icon-button group relative transition-colors',
+        'ui-desktop-top-bar__icon-button group relative transition-colors',
         running ? 'text-accent' : starting ? 'text-warning' : 'text-secondary',
       )}
       aria-label={running ? 'Stop local models' : 'Start local models'}
@@ -149,7 +150,7 @@ export function LocalModelsToggle({ pa }: { pa: NativeExtensionClient }) {
       <span className="pointer-events-none absolute right-0 top-full z-50 mt-2 hidden whitespace-nowrap rounded-md bg-elevated px-2 py-1 text-xs font-medium text-primary shadow-lg ring-1 ring-border group-hover:block group-focus-visible:block">
         {label}
       </span>
-    </button>
+    </IconButton>
   );
 }
 
