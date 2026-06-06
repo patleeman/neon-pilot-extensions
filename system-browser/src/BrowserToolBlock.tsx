@@ -1,4 +1,4 @@
-import { cx, Pill, SurfacePanel } from '@neon-pilot/extensions/ui';
+import { InlineMeta, Pill, Spinner, TextButton, ToolResultCard } from '@neon-pilot/extensions/ui';
 import { memo } from 'react';
 
 const BROWSER_TOOL_LABELS: Record<string, string> = {
@@ -48,34 +48,32 @@ export const BrowserToolBlock = memo(function BrowserToolBlock({
   const title = BROWSER_TOOL_LABELS[block.tool] ?? 'Browser tool';
 
   return (
-    <SurfacePanel muted className={cx('px-3.5 py-3 text-[12px] transition-colors', isError && 'border-danger/30 bg-danger/5')}>
-      <div className="flex items-start gap-3">
-        <div className="min-w-0 flex-1">
-          <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <span className="truncate text-[13px] font-medium text-primary">{title}</span>
-            <Pill tone={isError ? 'danger' : 'teal'} mono>
-              browser
-            </Pill>
-          </div>
-          <p className="mt-1 text-[12px] leading-relaxed text-secondary">
-            The agent used the Workbench Browser. Open it when you want to see or control the page.
-          </p>
-          {url ? <p className="mt-1 truncate font-mono text-[11px] text-secondary">{url}</p> : null}
-          {isError && block.output ? <p className="mt-2 text-[12px] leading-relaxed text-danger/85">{block.output}</p> : null}
-          <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px]">
-            {isRunning ? (
-              <span className="inline-flex items-center gap-1.5 text-dim">
-                <span className="h-3.5 w-3.5 rounded-full border-[1.5px] border-current border-t-transparent animate-spin" />
-                using browser…
-              </span>
-            ) : (
-              <button type="button" onClick={() => onOpenBrowser?.()} disabled={!onOpenBrowser} className="ui-action-button text-[10px]">
-                Open browser
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    </SurfacePanel>
+    <ToolResultCard
+      tone={isError ? 'danger' : 'neutral'}
+      title={title}
+      badges={
+        <Pill tone={isError ? 'danger' : 'teal'} mono>
+          browser
+        </Pill>
+      }
+      meta={url ? <span className="font-mono text-secondary">{url}</span> : undefined}
+      body={
+        isError && block.output
+          ? block.output
+          : 'The agent used the Workbench Browser. Open it when you want to see or control the page.'
+      }
+      actions={
+        isRunning ? (
+          <InlineMeta>
+            <Spinner />
+            using browser…
+          </InlineMeta>
+        ) : (
+          <TextButton type="button" onClick={() => onOpenBrowser?.()} disabled={!onOpenBrowser} tone="accent">
+            Open browser
+          </TextButton>
+        )
+      }
+    />
   );
 });
