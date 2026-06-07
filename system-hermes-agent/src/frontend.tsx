@@ -1181,11 +1181,25 @@ export function HermesAgentPage({ pa, context }: ExtensionSurfaceProps) {
   if (!showSetup) {
     return (
       <div className="flex h-full min-h-0 flex-col overflow-hidden bg-base">
-        {error ? <ErrorState message={error} /> : null}
-        {sessionsError ? <Notice className="mx-auto mt-4 w-full max-w-[68rem]">{sessionsError}</Notice> : null}
-        <header className="mx-auto w-full max-w-[68rem] shrink-0 px-8 pb-2 pt-9 sm:px-10">
+        {error ? (
+          <div className="mx-auto w-full max-w-[68rem] px-8 pt-6 sm:px-10">
+            <ErrorState message={error} />
+          </div>
+        ) : null}
+        {sessionsError ? (
+          <div className="mx-auto w-full max-w-[68rem] px-8 pt-6 sm:px-10">
+            <Notice>{sessionsError}</Notice>
+          </div>
+        ) : null}
+        <header
+          className="mx-auto w-full max-w-[68rem] shrink-0 px-8 pb-7 pt-12 sm:px-10 sm:pt-14"
+          style={{ margin: '0 auto', maxWidth: '68rem', padding: '56px 40px 28px', width: '100%' }}
+        >
           <div className="min-w-0">
-            <h1 className="truncate text-[40px] font-semibold leading-tight text-primary">
+            <h1
+              className="truncate text-[40px] font-semibold leading-tight text-primary"
+              style={{ fontSize: 40, fontWeight: 600, lineHeight: 1.15 }}
+            >
               {activeSession ? sessionTitle(activeSession) : 'Hermes Agent'}
             </h1>
             {activeSession ? (
@@ -1198,26 +1212,32 @@ export function HermesAgentPage({ pa, context }: ExtensionSurfaceProps) {
           </div>
         </header>
 
-        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
-          {!activeSessionId ? (
-            <EmptyState title="No session selected" body="Use the Hermes sidebar to open or create a remote agent session." />
-          ) : messagesLoading || loading ? (
-            <LoadingState label="Loading messages…" />
-          ) : chatBlocks.length === 0 ? (
-            <EmptyState title="Empty Hermes session" body="Send the first message to this remote agent session." />
-          ) : (
-            <ChatView
-              messages={chatBlocks}
-              conversationId={activeSessionId}
-              isStreaming={sending}
-              remoteControlled
-              remoteControlStatus={`You are remotely controlling a hermes agent on ${remoteServerLabel(config?.baseUrl)}.`}
-            />
-          )}
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-8 sm:px-10" style={{ paddingLeft: 40, paddingRight: 40 }}>
+          <div className="mx-auto flex min-h-full w-full max-w-[68rem] flex-col" style={{ margin: '0 auto', maxWidth: '68rem', width: '100%' }}>
+            {!activeSessionId ? (
+              <EmptyState title="No session selected" body="Use the Hermes sidebar to open or create a remote agent session." />
+            ) : messagesLoading || loading ? (
+              <LoadingState label="Loading messages…" />
+            ) : chatBlocks.length === 0 ? (
+              <EmptyState title="Empty Hermes session" body="Send the first message to this remote agent session." />
+            ) : (
+              <ChatView
+                messages={chatBlocks}
+                conversationId={activeSessionId}
+                isStreaming={sending}
+                remoteControlled
+                remoteControlStatus={`You are remotely controlling a hermes agent on ${remoteServerLabel(config?.baseUrl)}.`}
+              />
+            )}
+          </div>
         </div>
 
         {activeSessionId ? (
-          <div className="shrink-0" aria-label="Hermes chat composer">
+          <div
+            className="mx-auto w-full max-w-[68rem] shrink-0 px-8 pb-6 sm:px-10"
+            style={{ margin: '0 auto', maxWidth: '68rem', padding: '0 40px 24px', width: '100%' }}
+            aria-label="Hermes chat composer"
+          >
             <ChatRailComposer
               conversationId={activeSessionId}
               workspaceCwd={config?.name ?? 'Hermes'}
