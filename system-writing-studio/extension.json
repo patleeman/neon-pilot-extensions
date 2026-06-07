@@ -261,6 +261,7 @@
         "name": "writing_studio_get_canvas",
         "description": "Read the active Writing Studio document, markdown canvas, open comments, and document list.",
         "action": "writingStudioGetCanvas",
+        "activation": "explicit",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -277,6 +278,7 @@
         "name": "writing_studio_update_canvas",
         "description": "Replace the markdown content of a Writing Studio document.",
         "action": "writingStudioUpdateCanvas",
+        "activation": "explicit",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -308,6 +310,7 @@
         "name": "writing_studio_add_annotation",
         "description": "Add a floating Writing Studio comment, suggestion, reaction, or warning anchored to an exact quote in the canvas.",
         "action": "writingStudioAddAnnotation",
+        "activation": "explicit",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -356,6 +359,7 @@
         "name": "writing_studio_review_canvas",
         "description": "Run the Writing Studio review pipeline for the active document and add generated annotations.",
         "action": "writingStudioRunReview",
+        "activation": "explicit",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -376,6 +380,7 @@
         "name": "writing_studio_resolve_annotation",
         "description": "Resolve an open Writing Studio annotation by id.",
         "action": "writingStudioResolveAnnotation",
+        "activation": "explicit",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -399,6 +404,7 @@
         "name": "writing_studio_update_annotation",
         "description": "Update an existing Writing Studio annotation body, kind, emoji, or exact quote anchor.",
         "action": "writingStudioUpdateAnnotation",
+        "activation": "explicit",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -450,6 +456,7 @@
         "name": "writing_studio_apply_annotation_edit",
         "description": "Apply an approved Writing Studio annotation replacement and resolve that annotation.",
         "action": "writingStudioApplyAnnotationEdit",
+        "activation": "explicit",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -476,6 +483,7 @@
         "name": "writing_studio_get_agent_instructions",
         "description": "Read the current Writing Studio agent instructions for the active document.",
         "action": "writingStudioGetAgentInstructions",
+        "activation": "explicit",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -492,6 +500,7 @@
         "name": "writing_studio_update_agent_instructions",
         "description": "Update the Writing Studio agent's own per-document instructions.",
         "action": "writingStudioUpdateAgentInstructions",
+        "activation": "explicit",
         "inputSchema": {
           "type": "object",
           "properties": {
