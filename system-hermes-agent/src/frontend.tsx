@@ -391,7 +391,9 @@ function newSessionTitle(): string {
 
 async function navigateTo(pa: ExtensionSurfaceProps['pa'], to: string) {
   const handled = await pa.commands.execute('app.navigate', { to });
-  if (!handled && typeof window !== 'undefined') window.location.href = to;
+  if (!handled && typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('neon-pilot-desktop-navigate', { detail: { route: to } }));
+  }
 }
 
 function SidebarSvgIcon({ path }: { path: string }) {
