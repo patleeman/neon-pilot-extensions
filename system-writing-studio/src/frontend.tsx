@@ -1835,7 +1835,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
   }, [activeDocumentId, currentModel, pa]);
 
   useEffect(() => {
-    if (!state || state.chatConversationId) return;
+    if (!state) return;
     let cancelled = false;
     ensureChatSession()
       .then((conversationId) => {
@@ -1848,7 +1848,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
     return () => {
       cancelled = true;
     };
-  }, [ensureChatSession, state?.chatConversationId, state?.id]);
+  }, [ensureChatSession, state?.id]);
 
   const getChatContextMessages = useCallback(
     async () => {
