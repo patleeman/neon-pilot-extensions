@@ -74,6 +74,7 @@ const DEFAULT_DEPLOYMENT_NAME = 'Local Hermes';
 const SESSION_CACHE_KEY = 'system-hermes-agent:last-sessions';
 const HIDDEN_SESSIONS_KEY = 'system-hermes-agent:hidden-sessions';
 const DISCONNECTED_MESSAGE = 'Hermes is not reachable at the configured URL.';
+const AUTOMATION_SESSION_SOURCES = new Set(['batch', 'cron']);
 
 function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
@@ -301,10 +302,13 @@ function writeHiddenSessionIds(ids: Set<string>) {
 function messageTimestamp(value: unknown): string {
   if (typeof value === 'string') {
     const trimmed = value.trim();
-    return trimmed || new Date(0).toISOString();
+    if (!trimmed) return new Date(0).toISOString();
+    if (/^\d+(\.\d+)?$/.test(trimmed)) return messageTimestamp(Number(trimmed));
+    const date = new Date(trimmed);
+    return Number.isNaN(date.getTime()) ? trimmed : date.toISOString();
   }
   if (typeof value === 'number' && Number.isFinite(value)) {
-    const date = new Date(value);
+    const date = new Date(value < 10_000_000_000 ? value * 1000 : value);
     return Number.isNaN(date.getTime()) ? new Date(0).toISOString() : date.toISOString();
   }
   if (value instanceof Date) {
@@ -315,6 +319,40 @@ function messageTimestamp(value: unknown): string {
     return messageTimestamp(candidate);
   }
   return new Date(0).toISOString();
+}
+
+function sessionTimestampFromId(session: HermesSession): string {
+  const id = sessionId(session);
+  const dated = /^(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})/.exec(id);
+  if (dated) {
+    return messageTimestamp(`${dated[1]}-${dated[2]}-${dated[3]}T${dated[4]}:${dated[5]}:${dated[6]}Z`);
+  }
+  const epoch = /(?:^|_)(\d{10,13})(?:_|$)/.exec(id);
+  return epoch ? messageTimestamp(Number(epoch[1])) : '';
+}
+
+function sessionUpdatedAt(session: HermesSession): string | undefined {
+  const record = session as Record<string, unknown>;
+  const value =
+    session.last_active ??
+    record.last_active_at ??
+    record.updated_at ??
+    record.modified_at ??
+    record.created_at ??
+    record.timestamp ??
+    session.ended_at ??
+    session.started_at;
+  const normalized = messageTimestamp(value);
+  if (normalized !== new Date(0).toISOString()) return normalized;
+  return sessionTimestampFromId(session) || undefined;
+}
+
+function isAutomationSession(session: HermesSession): boolean {
+  return AUTOMATION_SESSION_SOURCES.has(safeString(session.source).trim().toLowerCase());
+}
+
+function visibleHermesSessions(sessions: HermesSession[]): HermesSession[] {
+  return sessions.filter((session) => !isAutomationSession(session));
 }
 
 function messageString(value: unknown, fallback = ''): string {
@@ -717,7 +755,7 @@ function SessionList({
       subtitle: meta,
       status: 'idle',
       route: buildSessionRoute(deployment.id, id),
-      updatedAt: safeString(session.last_active ?? session.started_at) || undefined,
+      updatedAt: sessionUpdatedAt(session),
       metadata: {
         conversationId: id,
         deploymentId: deployment.id,
@@ -863,9 +901,9 @@ export function HermesSessionsSidebar({ pa, context }: ExtensionSurfaceProps) {
       const entries = await Promise.all(
         configState.deployments.map(async (deployment) => {
           try {
-            const result = await pa.extension.invoke('listSessions', { deploymentId: deployment.id, limit: 100, includeChildren: true });
+            const result = await pa.extension.invoke('listSessions', { deploymentId: deployment.id, limit: 100, includeChildren: false });
             if (!hasListPayload(result)) throw new Error('Hermes returned an unrecognized session list response.');
-            const nextSessions = unwrapList<HermesSession>(result);
+            const nextSessions = visibleHermesSessions(unwrapList<HermesSession>(result));
             const resolved = preserveNonEmptySessions(readCachedSessions(deployment.id), nextSessions);
             writeCachedSessions(deployment.id, resolved);
             return [deployment.id, resolved] as const;
@@ -894,9 +932,9 @@ export function HermesSessionsSidebar({ pa, context }: ExtensionSurfaceProps) {
       const previousSessions = sessionsByDeployment[deploymentId] ?? [];
       const result = await pa.extension.invoke('createSession', { deploymentId, title: newSessionTitle() });
       let session = unwrapSession(result);
-      const sessionsResult = await pa.extension.invoke('listSessions', { deploymentId, limit: 100, includeChildren: true });
+      const sessionsResult = await pa.extension.invoke('listSessions', { deploymentId, limit: 100, includeChildren: false });
       if (hasListPayload(sessionsResult)) {
-        const nextSessions = unwrapList<HermesSession>(sessionsResult);
+        const nextSessions = visibleHermesSessions(unwrapList<HermesSession>(sessionsResult));
         const resolved = preserveNonEmptySessions(previousSessions, nextSessions);
         writeCachedSessions(deploymentId, resolved);
         setSessionsByDeployment((current) => ({ ...current, [deploymentId]: resolved }));
@@ -1026,7 +1064,7 @@ export function HermesAgentPage({ pa, context }: ExtensionSurfaceProps) {
       const [configResult, healthResult, sessionsResult] = await Promise.allSettled([
         pa.extension.invoke('readConfig'),
         pa.extension.invoke('health', { deploymentId: activeDeploymentId }),
-        pa.extension.invoke('listSessions', { deploymentId: activeDeploymentId, limit: 100, includeChildren: true }),
+        pa.extension.invoke('listSessions', { deploymentId: activeDeploymentId, limit: 100, includeChildren: false }),
       ]);
       if (configResult.status === 'fulfilled') {
         const state = unwrapConfigState(configResult.value);
@@ -1044,7 +1082,7 @@ export function HermesAgentPage({ pa, context }: ExtensionSurfaceProps) {
       }
       if (sessionsResult.status === 'fulfilled') {
         if (hasListPayload(sessionsResult.value)) {
-          const nextSessions = unwrapList<HermesSession>(sessionsResult.value);
+          const nextSessions = visibleHermesSessions(unwrapList<HermesSession>(sessionsResult.value));
           setSessions((current) => {
             const resolved = preserveNonEmptySessions(current, nextSessions);
             writeCachedSessions(activeDeploymentId, resolved);
