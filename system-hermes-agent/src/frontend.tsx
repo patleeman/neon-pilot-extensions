@@ -825,7 +825,15 @@ function toChatBlocks(messages: HermesMessage[], pending: boolean): ExtensionCha
       blocks.push({ type: 'user', id, ts, text });
     } else if (role === 'tool' || message.tool_name) {
       const toolName = messageString(message.tool_name, 'tool').trim() || 'tool';
-      blocks.push({ type: 'text', id, ts, text: text ? `**${toolName}**\n\n${text}` : `**${toolName}**` });
+      blocks.push({
+        type: 'tool_use',
+        id,
+        ts,
+        tool: toolName,
+        input: {},
+        output: text,
+        status: 'ok',
+      });
     } else {
       blocks.push({ type: 'text', id, ts, text });
     }
@@ -865,6 +873,15 @@ function sanitizeChatBlock(block: ExtensionChatMessageBlock, index: number): Ext
     case 'thinking':
     case 'text':
       return { ...block, id, ts, text: safeString(block.text) };
+    case 'tool_use':
+      return {
+        ...block,
+        id,
+        ts,
+        tool: safeString(block.tool, 'tool').trim() || 'tool',
+        input: typeof block.input === 'object' && block.input !== null ? (block.input as Record<string, unknown>) : {},
+        output: safeString(block.output),
+      };
     case 'image':
       return {
         ...block,

@@ -5,7 +5,7 @@
   "packageType": "user",
   "defaultEnabled": false,
   "description": "Pair the Kitty Litter iOS app directly with Neon Pilot using a PA-owned Alleycat-compatible host and Codex-shaped conversation APIs.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "frontend": {
     "entry": "dist/frontend.js",
     "styles": []
@@ -79,7 +79,7 @@
     "storage:readwrite"
   ],
   "compatibility": {
-    "neonPilot": ">=0.10.0 <0.11.0",
+    "neonPilot": ">=0.10.0 <0.12.0",
     "extensionApi": "^2"
   }
 }

@@ -706,10 +706,12 @@ ${reviewChunk.text}`;
 }
 
 export async function ensureChatSession(input: unknown, ctx: ExtensionBackendContext): Promise<{ conversationId: string }> {
-  const payload = input as { documentId?: string; modelRef?: string };
+  const payload = input as { documentId?: string; modelRef?: string; ensureLive?: boolean };
   const state = await readState(ctx, payload.documentId);
   const modelRef = typeof payload.modelRef === 'string' && payload.modelRef.trim() ? payload.modelRef.trim() : undefined;
-  const conversationId = await ensureHostChatConversation(state, ctx, modelRef);
+  const conversationId = await ensureHostChatConversation(state, ctx, modelRef, {
+    ensureLive: payload.ensureLive !== false,
+  });
   await writeState(ctx, state);
   return { conversationId };
 }

@@ -1325,6 +1325,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
   const [activeAnnotationId, setActiveAnnotationId] = useState<string | null>(null);
   const [selectionMenu, setSelectionMenu] = useState<SelectionMenuState | null>(null);
   const [chatDraftInsertion, setChatDraftInsertion] = useState<{ id: string; text: string } | null>(null);
+  const [readyChatConversationId, setReadyChatConversationId] = useState<string | null>(null);
   const [commentLayout, setCommentLayout] = useState<CommentLayout>({ railHeight: 0 });
   const [commentPositions, setCommentPositions] = useState<Record<string, number>>({});
   const [, setFormatStateVersion] = useState(0);
@@ -1802,6 +1803,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
     const result = (await pa.extension.invoke('writingStudioEnsureChatSession', {
       documentId: activeDocumentId,
       modelRef: currentModel || undefined,
+      ensureLive: false,
     })) as { conversationId: string };
     setState((current) => (current ? { ...current, chatConversationId: result.conversationId } : current));
     return result.conversationId;
@@ -1826,6 +1828,7 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
         modelRef: currentModel || undefined,
       })) as { messages: ChatMessage[]; conversationId: string };
       setState((current) => (current ? { ...current, chat: result.messages, chatConversationId: result.conversationId } : current));
+      setReadyChatConversationId(result.conversationId);
       setChatDraftInsertion(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -1837,10 +1840,12 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
   useEffect(() => {
     if (!state) return;
     let cancelled = false;
+    setReadyChatConversationId(null);
     ensureChatSession()
       .then((conversationId) => {
         if (cancelled) return;
         setState((current) => (current ? { ...current, chatConversationId: conversationId } : current));
+        setReadyChatConversationId(conversationId);
       })
       .catch((err) => {
         if (!cancelled) setError(err instanceof Error ? err.message : String(err));
@@ -2313,7 +2318,8 @@ export function WritingStudioPage({ pa }: { pa: NativeExtensionClient }) {
         </div>
         <section className="writing-studio-chat-shell">
           <ExtensionChatRail
-            conversationId={chatConversationId}
+            key={readyChatConversationId ?? 'pending-chat'}
+            conversationId={readyChatConversationId}
             workspaceCwd={null}
             className="writing-studio-extension-chat"
             emptyState={<p className="writing-studio-muted">Ask for help with the draft, or ask the agent to add comments to the canvas.</p>}
