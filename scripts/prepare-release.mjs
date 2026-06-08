@@ -28,12 +28,17 @@ for (const entry of packages) {
   console.log(`Packing ${entry.id} -> ${outputPath}`);
   run(neonPilotRepo, [resolve(neonPilotRepo, 'scripts', 'extension-pack.mjs'), entry.packageRoot, '--out', outputPath]);
 
+  const packageManifest = readPackageManifest(entry);
   releasePackages.push({
     id: entry.id,
+    name: packageManifest.name ?? entry.id,
+    description: packageManifest.description ?? '',
+    version: packageManifest.version ?? entry.version,
     path: entry.path,
     channel: entry.channel ?? 'stable',
     tag,
     artifact,
+    ...(packageManifest.compatibility ? { compatibility: packageManifest.compatibility } : {}),
     sha256: sha256(outputPath),
   });
 }
@@ -64,4 +69,10 @@ function run(cwd, commandArgs) {
 
 function sha256(path) {
   return createHash('sha256').update(readFileSync(path)).digest('hex');
+}
+
+function readPackageManifest(entry) {
+  const parsed = JSON.parse(readFileSync(resolve(entry.packageRoot, 'extension.json'), 'utf8'));
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) fail(`${entry.id} extension.json is not an object.`);
+  return parsed;
 }
