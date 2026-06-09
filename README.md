@@ -74,7 +74,7 @@ Example compatibility metadata:
   "name": "Example Search",
   "version": "0.1.0",
   "compatibility": {
-    "neonPilot": ">=0.10.0 <0.12.0",
+    "neonPilot": ">=0.10.0",
     "extensionApi": "^2"
   }
 }

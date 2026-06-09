@@ -16,91 +16,91 @@
       "path": "system-agent-browser",
       "channel": "stable",
       "version": "0.1.0",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-alleycat",
       "path": "system-alleycat",
       "channel": "stable",
       "version": "0.1.1",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-auto-router",
       "path": "system-auto-router",
       "channel": "stable",
       "version": "0.1.0",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-browser",
       "path": "system-browser",
       "channel": "stable",
       "version": "0.1.0",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-ds4",
       "path": "system-ds4",
       "channel": "stable",
       "version": "0.1.3",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-duckduckgo-search",
       "path": "system-duckduckgo-search",
       "channel": "stable",
       "version": "0.1.0",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-exa-search",
       "path": "system-exa-search",
       "channel": "stable",
       "version": "0.1.0",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-hermes-agent",
       "path": "system-hermes-agent",
       "channel": "stable",
       "version": "0.1.0",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-local-models",
       "path": "system-local-models",
       "channel": "stable",
       "version": "0.1.0",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-self-preservation",
       "path": "system-self-preservation",
       "channel": "stable",
       "version": "0.1.0",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-suggested-context",
       "path": "system-suggested-context",
       "channel": "stable",
       "version": "0.1.0",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-video-probe",
       "path": "system-video-probe",
       "channel": "stable",
       "version": "0.1.0",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     },
     {
       "id": "system-writing-studio",
       "path": "system-writing-studio",
       "channel": "stable",
       "version": "0.1.2",
-      "tag": "v0.11.6"
+      "tag": "v0.11.7"
     }
   ]
 }
