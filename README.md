@@ -179,6 +179,7 @@ gh release upload v0.9.1-rc.6 \
 - `system-duckduckgo-search` - agent web search tool backed by DuckDuckGo HTML results.
 - `system-exa-search` - agent tool for Exa web search.
 - `system-hermes-agent` - connect Neon Pilot to one or more Hermes Agent API deployments.
+- `system-knowledge` - knowledge files, sync, prompt references, and conversation-adjacent knowledge views.
 - `system-local-models` - local MLX and GGUF model management UI.
 - `system-self-preservation` - agent self-preservation instruction and context hooks.
 - `system-suggested-context` - related conversation suggestions for new prompts.

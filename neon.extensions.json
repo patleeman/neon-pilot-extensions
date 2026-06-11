@@ -68,6 +68,13 @@
       "tag": "v0.11.7"
     },
     {
+      "id": "system-knowledge",
+      "path": "system-knowledge",
+      "channel": "stable",
+      "version": "0.1.0",
+      "tag": "v0.11.7"
+    },
+    {
       "id": "system-local-models",
       "path": "system-local-models",
       "channel": "stable",
